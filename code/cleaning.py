@@ -11,8 +11,8 @@ import pandas as pd
 #     a good way to deal with this?
 
 # Read data
-emails = pd.read_csv('../data/raw_data/emails.csv')
-persons = pd.read_csv('../data/raw_data/persons.csv')
+emails = pd.read_csv('../data/raw_data/Emails.csv')
+persons = pd.read_csv('../data/raw_data/Persons.csv')
 receivers = pd.read_csv('../data/raw_data/EmailReceivers.csv')
 
 # Redacted indicator
@@ -94,5 +94,5 @@ emails = emails[[
 ]]
 
 emails_hill = emails.ix[emails['SenderHillary']]
-emails_hill.to_csv('./data/emails_hill.csv', index=False)
-emails.to_csv('./data/emails.csv', index=False)
+emails_hill.to_csv('../data/emails_hill.csv', index=False)
+emails.to_csv('../data/emails.csv', index=False)
