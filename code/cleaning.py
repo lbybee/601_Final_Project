@@ -11,9 +11,9 @@ import pandas as pd
 #     a good way to deal with this?
 
 # Read data
-emails = pd.read_csv('./data/raw_data/emails.csv')
-persons = pd.read_csv('./data/raw_data/persons.csv')
-receivers = pd.read_csv('./data/raw_data/EmailReceivers.csv')
+emails = pd.read_csv('../data/raw_data/emails.csv')
+persons = pd.read_csv('../data/raw_data/persons.csv')
+receivers = pd.read_csv('../data/raw_data/EmailReceivers.csv')
 
 # Redacted indicator
 part = emails['ExtractedReleaseInPartOrFull'] == 'RELEASE IN PART'
@@ -96,4 +96,3 @@ emails = emails[[
 emails_hill = emails.ix[emails['SenderHillary']]
 emails_hill.to_csv('./data/emails_hill.csv', index=False)
 emails.to_csv('./data/emails.csv', index=False)
-
