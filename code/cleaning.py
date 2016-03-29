@@ -84,7 +84,7 @@ def to_hrc(row):
 emails['ReceiverHillary'] = emails.apply(to_hrc, axis=1)
 emails['SenderHillary'] = emails['SenderPersonId'] == 80
 
-# save
+# Save
 emails = emails[[
     'Id', 'MetadataSubject', 'MetadataTo', 'MetadataFrom', 'MetadataDateSent',
     'ExtractedSubject', 'ExtractedTo', 'ExtractedFrom', 'ExtractedDateSent',
@@ -93,5 +93,7 @@ emails = emails[[
     'Redacted', 'ReceiverHillary', 'SenderHillary',
 ]]
 
+emails_hill = emails.ix[emails['SenderHillary']]
+emails_hill.to_csv('./data/emails_hill.csv', index=False)
 emails.to_csv('./data/emails.csv', index=False)
 
