@@ -3,6 +3,9 @@ Cleaning Hillary Clinton email data. Note that this was written and tested
 on Python 3.5 (Anaconda 2.4), and may or may not work on Python 2.X.
 
 '''
+import re
+from datetime import datetime as dt
+
 import numpy as np
 import pandas as pd
 
@@ -84,6 +87,56 @@ def to_hrc(row):
 emails['ReceiverHillary'] = emails.apply(to_hrc, axis=1)
 emails['SenderHillary'] = emails['SenderPersonId'] == 80
 
+# Clean Text
+pattern_email = re.compile('([\w\-\.]+@(\w[\w\-]+\.)+[\w\-]+)')
+pattern_declassify = re.compile('Declassify on:\s+\d+/\d+/\d+')
+pattern_confidential = re.compile('Class:\s+CONFIDENTIAL')
+pattern_reason = re.compile('Reason:\s\d.\d\(\w\)')
+pattern_release = re.compile('(RELEASE\s+IN\s+PART)')
+pattern_date = re.compile(
+    '(\w+day, \w+ \d+, \d+ \d+:\d+ [AP]M)')
+pattern_misc = re.compile('([rR][eE]:)|([fF][wW]([Dd])?:)')
+patterns = (
+    pattern_email, pattern_declassify,
+    pattern_confidential, pattern_reason, pattern_release,
+    pattern_date, pattern_misc
+)
+pattern_plsprint = re.compile('[Pp][iI]s ([Pp]rint)')
+pattern_plsrespond = re.compile('[Pp][iI]s ([Rr]espond)')
+pattern_plsadd = re.compile('[Pp][iI]s ([Aa]dd)')
+def clean_text(row):
+    text = row['AllText']
+    for pattern in patterns:
+        text = re.sub(pattern, ' ', text)
+    text = re.sub(pattern_plsprint, 'Pls print', text)
+    text = re.sub(pattern_plsrespond, 'Pls respond', text)
+    text = re.sub(pattern_plsadd, 'Pls add', text)
+    return text
+emails['AllText'] = emails.apply(clean_text, axis=1)
+
+# Extract Dates
+def get_date(row):
+    datestr = row['MetadataDateSent']
+    if isinstance(datestr, str):
+        return dt.strptime(datestr[:10], '%Y-%m-%d').strftime('%Y-%m-%d')
+    else:
+        return np.nan
+def get_year(row):
+    d = row['DateSent']
+    if isinstance(d, str):
+        return int(d[:4])
+    else:
+        return np.nan
+def get_month(row):
+    d = row['DateSent']
+    if isinstance(d, str):
+        return int(d[5:7])
+    else:
+        return np.nan
+emails['DateSent'] = emails.apply(get_date, axis=1)
+emails['YearSent'] = emails.apply(get_year, axis=1)
+emails['MonthSent'] = emails.apply(get_month, axis=1)
+
 # Save
 emails = emails[[
     'Id', 'MetadataSubject', 'MetadataTo', 'MetadataFrom', 'MetadataDateSent',
@@ -91,8 +144,11 @@ emails = emails[[
     'ExtractedBodyText', 'AllText',
     'SenderPersonId', 'SenderPerson', 'ReceiverPersonId', 'ReceiverPerson',
     'Redacted', 'ReceiverHillary', 'SenderHillary',
+    'DateSent', 'YearSent', 'MonthSent',
 ]]
 
 emails_hill = emails.ix[emails['SenderHillary']]
+emails_hill = emails_hill.reset_index(drop=True)
+
 emails_hill.to_csv('../data/emails_hill.csv', index=False)
 emails.to_csv('../data/emails.csv', index=False)
