@@ -30,11 +30,12 @@ genTopTerms <- function(prob.mat, K, t.count, v){
 
 load("../data/dtm.rda")
 
-model <- LDA(dtm, 40)
-
-save(model, file="../data/model40.rda")
-
-prob.mat <- exp(model@beta)
-post.mat <- genPost(prob.mat, dtm)
-top.terms <- genTopTerms(post.mat, 20, 50, Terms(dtm))
-write.csv(top.terms, "../data/top.terms.40.csv")
+for(i in seq(5, 100, 5)){
+    model <- LDA(dtm, i)
+    print(i)
+    save(model, file=paste("../data/model", i, ".rda", sep=""))
+    prob.mat <- exp(model@beta)
+    post.mat <- genPost(prob.mat, dtm)
+    top.terms <- genTopTerms(post.mat, i, 10, Terms(dtm))
+    write.csv(top.terms, paste("../data/top.terms.", i, ".csv", sep=""))
+}
