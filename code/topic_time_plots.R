@@ -1,10 +1,10 @@
 library(ggplot2)
 library(tm)
 
-K <- 20 
+K <- 25
 
-load("../data/dates.rda")
-load(paste("../data/model", K, ".rda", sep=""))
+load("../data/dates_hill.rda")
+load(paste("../data/model_hill", K, ".rda", sep=""))
 
 agg <- aggregate(model@gamma, list(dates), mean)
 
