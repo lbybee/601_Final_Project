@@ -25,6 +25,8 @@
 \usepackage{mathtools}
 \usepackage{dsfont}
 \usepackage{subfigure}
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
 
 
 \usetheme{Madrid}
@@ -128,6 +130,62 @@
 \maketitle
 \end{frame}
 
+
+\begin{frame}{Latent Dirichlet Allocation}
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+  \node[main, fill = white!100] (alpha) [label=below:$\alpha$] { };
+  \node[main] (theta) [right=of alpha,label=below:$\theta$] { };
+  \node[main] (z) [right=of theta,label=below:z] {};
+  \node[main] (beta) [above=of z,label=below:$\beta$] { };
+  \node[main, fill = black!10] (w) [right=of z,label=below:w] { };
+  \path (alpha) edge [connect] (theta)
+        (theta) edge [connect] (z)
+        (z) edge [connect] (w)
+        (beta) edge [connect] (w);
+  \node[rectangle, inner sep=0mm, fit= (z) (w),label=below right:N, xshift=13mm] {};
+  \node[rectangle, inner sep=4.4mm,draw=black!100, fit= (z) (w)] {};
+  \node[rectangle, inner sep=4.6mm, fit= (z) (w),label=below right:M, xshift=12.5mm] {};
+  \node[rectangle, inner sep=9mm, draw=black!100, fit = (theta) (z) (w)] {};
+\end{tikzpicture}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Latent Dirichlet Allocation: Some Details}
+
+\begin{itemize}
+\item We use $K = 30$ topics for our resulting model.
+\item What we ultimately care about are $\theta$ and $\beta$.
+\item $\theta$ corresponds to how likely a topic is to appear in a document.
+\item $\beta$ corresponds to how likely each word is to be associated with each topic.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Latent Dirichlet Allocation: Some Details}
+
+\begin{itemize}
+\item Some questions we want to answer with LDA
+\begin{itemize}
+\item Can we see sensible topics in the LDA output?
+\item Who is associated most with each issue?
+\item Do the topics proportions for each email line up with real world events?
+\item Can we predict the source of a given email?
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+
 \begin{frame}{Some Interesting Topics}
 
 \begin{table}[h]
@@ -154,6 +212,7 @@ state & candid & march & forc & includ & advis
 
 \end{frame}
 
+
 \begin{frame}{Topic Importance Over Time}
 
 \begin{figure}[h]
@@ -168,6 +227,7 @@ state & candid & march & forc & includ & advis
 \end{figure}
 
 \end{frame}
+
 
 \begin{frame}{Who Says What?}
 
@@ -200,7 +260,19 @@ Hillary Clinton & HA & SB & Richard Verma & JS & HC \\
 
 \end{frame}
 
-\begin{frame}{Multinomial Regression Results}
+
+\begin{frame}{Multinomial Logistic Regression}
+
+\begin{itemize}
+\item We next want to ask can we predict who said what?
+\item To answer this question we employ multinomial regression.
+\item We take a subset of people who sent emails, only those who have more that 100 emails sent and try prediction for these.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Multinomial Logistic Regression Results}
 
 \begin{table}[h]
 \centering
@@ -228,7 +300,6 @@ Lona Valmoro & 0.34 & 41
 \end{tabular}
 }
 \end{table}
-
 
 \end{frame}
 
