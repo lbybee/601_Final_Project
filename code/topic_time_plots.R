@@ -1,7 +1,7 @@
 library(ggplot2)
 library(tm)
 
-K <- 25
+K <- 30
 
 load("../data/dates_hill.rda")
 load(paste("../data/model_hill", K, ".rda", sep=""))

@@ -1,7 +1,6 @@
 *.config
 *.Backup-*
 *.ddf
-*.pdf
 *.jpg
 *.out
 *.Rout
@@ -10,6 +9,9 @@
 *.pyc
 *.log
 *.aux
+*.nav
+*.snm
+*.toc
 *.gz
 *.dvi
 *~
