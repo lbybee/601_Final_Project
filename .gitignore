@@ -9,6 +9,9 @@
 *.pyc
 *.log
 *.aux
+*.nav
+*.snm
+*.toc
 *.gz
 *.dvi
 *~
