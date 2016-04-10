@@ -2,16 +2,17 @@ library(tm)
 library(glmnet)
 library(nnet)
 
-K <- 30
 
-load(paste("../data/model", K, ".rda", sep=""))
+load("../data/dtm.rda")
 load("../data/senders.rda")
 
 people <- table(senders$SenderPerson)
 people <- names(people[people > 100])
 people <- people[people != ""]
 
-data <- data.frame(model@gamma)
+dtm <- weightTfIdf(dtm)
+data <- as.matrix(dtm)
+data <- data.frame(data)
 data$Person <- senders$SenderPerson
 data$Person <- as.factor(data$Person)
 data <- data[data$Person %in% people,]

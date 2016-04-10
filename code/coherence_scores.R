@@ -59,18 +59,55 @@ genUMassScores <- function(dtm, top_terms, K, term_count, t_ln){
 }
 
 
-scores_mn <- c()
-for(i in seq(5, 70, 5)){
-    load(paste("../data/dtm.rda"))
-    load(paste("../data/model", i, ".rda", sep=""))
-    prob.mat <- exp(model@beta)
-    post.mat <- genPost(prob.mat, dtm)
-    top.terms <- genTopTerms(post.mat, i, 10, Terms(dtm))
-    scores <- genUMassScores(dtm, top.terms, i, 10, dim(dtm)[1])
-    scores_mn <- c(scores_mn, mean(scores))
-    print(i)
+genNullUMass <- function(dtm, samp_n, v_ln, t_ln){
+    # what this does is randomly sample from pairs of
+    # words in the dtm, it then finds the UMass score for
+    # this random pair and returns a vector containing
+    # all these UMass.  This gives a distribution of the
+    # PMIs for the corpus and give us something to compare
+    # the PMI score from UMass with.
+
+    # make dtm truth mat
+    dtm_mat <- as.matrix(dtm)
+    dtm_t <- dtm_mat > 0
+
+    scores <- rep(NA, samp_n)
+    for(i in 1:samp_n){
+        ind <- sample(1:v_ln, 2, replace=TRUE)
+        p_12 <- sum(dtm_t[,ind[1]] & dtm_t[,ind[2]])
+        p_1 <- sum(dtm_t[,ind[1]])
+        p_2 <- sum(dtm_t[,ind[2]])
+        scores[i] <- log((p_12 + 1 / t_ln) * t_ln / (p_2 * p_1))
+    }
+    scores[is.na(scores)] = 0
+    return(scores)
 }
 
 
-ggplot() + geom_line(aes(x=seq(5, 70, 5), y=scores_mn)) + xlab("K") + ylab("Mean UMass Score")    
-ggsave("umass_scores.pdf")
+genUMassScoreTest <- function(umass_scores, K, null_umass_dist){
+    # gets the probability of getting a given score given the UMass score
+    # distribution
+
+    score_prob <- rep(NA, K)
+    for(i in 1:K){
+        score_prob[i] <- sum(umass_scores[i] <= null_umass_dist) / length(null_umass_dist)
+    }
+    return(score_prob)
+}
+
+
+K <- 30
+samp <- 1000
+t_count <- 10
+
+load("../data/dtm.rda")
+load(paste("../data/model", K, ".rda", sep=""))
+
+null_scores <- genNullUMass(dtm, samp, dim(dtm)[2], dim(dtm)[1])
+post_mat <- genPost(model@beta, dtm)
+post_terms <- genTopTerms(post_mat, K, t_count, Terms(dtm))
+umass_scores <- genUMassScores(dtm, post_terms, K, t_count, dim(dtm)[1]) 
+umass_prob <- genUMassScoreTest(umass_scores, K, null_scores)
+
+ggplot() + geom_density(aes(x=null_scores)) + geom_point(aes(x=umass_scores, y=rep(0, length(umass_scores))), color="blue") + xlab("UMass Score") + ylab("Density")
+ggsave("null.density.jpg")
