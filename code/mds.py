@@ -84,12 +84,26 @@ colors = cm.Paired(np.linspace(0, 1, 10))
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
+ax.scatter(z1, z2, s=10, lw=0.2)
+fig.savefig('../images/mds_2d.pdf')
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
 for g, c in zip(range(10), colors):
     ax.scatter(z1[y_pred==g], z2[y_pred==g],
                c=c, s=10, lw=0.2, label=str(g))
 ax.legend(scatterpoints=1, markerscale=2)
-fig.savefig('../mds_2d.pdf')
+fig.savefig('../images/mds_2d_cluster.pdf')
 
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(z1, z2, z3, s=10, lw=0.2)
+ax.view_init(29, 46)
+fig.savefig('../images/mds_3d_1.pdf')
+
+ax.view_init(-10, 227)
+fig.savefig('../images/mds_3d_2.pdf')
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
@@ -98,10 +112,10 @@ for g, c in zip(range(10), colors):
                c=c, s=10, lw=0.2, label=str(g))
 ax.legend(scatterpoints=1, markerscale=2)
 ax.view_init(29, 46)
-fig.savefig('../mds_3d_1.pdf')
+fig.savefig('../images/mds_3d_cluster_1.pdf')
 
 ax.view_init(-10, 227)
-fig.savefig('../mds_3d_2.pdf')
+fig.savefig('../images/mds_3d_cluster_2.pdf')
 
 
 np.savetxt('../data/clusters.txt', np.column_stack((inds, y_pred)))
