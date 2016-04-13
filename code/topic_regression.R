@@ -6,6 +6,7 @@ K <- 30
 
 load(paste("../data/model", K, ".rda", sep=""))
 load("../data/senders.rda")
+clusters <- read.table("../data/clusters.txt", header=FALSE)
 
 people <- table(senders$SenderPerson)
 people <- names(people[people > 100])
