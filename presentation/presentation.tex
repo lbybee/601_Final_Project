@@ -1,5 +1,5 @@
-% \documentclass[14pt]{beamer}
-\documentclass[handout,14pt]{beamer}
+% \documentclass[13pt]{beamer}
+\documentclass[handout,13pt]{beamer}
 
 \usepackage{pgfpages}  % Uncomment one of these lines for X-on-1 printing
 % \pgfpagesuselayout{4 on 1}[letterpaper, border shrink=5mm, landscape]
@@ -30,7 +30,7 @@
 
 
 \usetheme{Madrid}
-% \usecolortheme{}
+\usecolortheme{beaver}
 
 \setbeamertemplate{enumerate items}[circle]  % standard enumeration
 \setbeamertemplate{itemize items}[circle]  % default itemize
@@ -131,71 +131,186 @@
 \end{frame}
 
 
-\begin{frame}{Latent Dirichlet Allocation}
+\begin{frame}{Data}
+\begin{itemize}
+\item From 2008 to 2013, Hillary Clinton and some of her staff used a private email server for much of their communication
+\item In response to FOIA requests, the State Department has released pdfs of roughly 30,000 of these emails, with roughly 8,000 sent by Clinton
+\item We mostly want to condense and explore the data
+  \begin{itemize}
+  \item Break down a huge interpretation problem to a human-sized one
+  \item Find specific and relatable observations, not just statistical ones
+  \end{itemize}
+\end{itemize}
+\end{frame}
 
+
+\begin{frame}{Data}
+\begin{itemize}
+\item We have a dataset of all these released emails, including sender and receiver information\footnote{Thanks to Ben Hamner and the WSJ for making their code and data available, respectively.}
+\pause\item Bag-of-words model
+  \begin{itemize}
+  \item Stemming: combining words with the same ``root''
+  \item Remove extremely rare words and extremely common (stop) words
+  \end{itemize}
+\item After cleaning, roughly 28,000 emails and a total vocabulary of over 3,000 words
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Visualization}
+\begin{itemize}
+\item In order to visualize these emails, we first need a measure of distance
+\item Cosine similarity:
+  \begin{equation*}
+  \cos(\phi) = \frac{<V, W>}{\norm{V}\norm{W}}
+  \end{equation*}
+\item We can then use classical multi-dimensional scaling to visualize this data in lower dimensions
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Visualization}
+\begin{figure}[h]
+\centering
+\subfigure[2D]{\label{fig:mds_2d}\includegraphics[width=0.44\linewidth]{../images/mds_2d.pdf}}
+\subfigure[3D]{\label{fig:mds_3d}\includegraphics[width=0.54\linewidth]{../images/mds_3d_1.pdf}}
+\label{fig:mds}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Spectral Clustering}
+\begin{itemize}
+\item Cluster points using their pairwise similarity
+\item Computer the first $K$ eigenvectors of the normalized Laplacian
+  \begin{equation*}
+  L = I - D^{-1/2} S D^{-1/2}
+  \end{equation*}
+\item Perform $k$-means clustering on the resulting eigenvectors
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Spectral Clustering}
+\begin{figure}[h]
+\centering
+\subfigure[2D]{\label{fig:cluster_2d}\includegraphics[width=0.44\linewidth]{../images/mds_2d_cluster.pdf}}
+\subfigure[3D]{\label{fig:cluster_3d}\includegraphics[width=0.54\linewidth]{../images/mds_3d_cluster_1.pdf}}
+\label{fig:cluster}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Latent Dirichlet Allocation}
 \begin{figure}
 \centering
-\begin{tikzpicture}
+\begin{tikzpicture}[scale=1.0, every node/.style={transform shape}]
 \tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
 \tikzstyle{connect}=[-latex, thick]
 \tikzstyle{box}=[rectangle, draw=black!100]
-  \node[main, fill = white!100] (alpha) [label=below:$\alpha$] { };
-  \node[main] (theta) [right=of alpha,label=below:$\theta$] { };
-  \node[main] (z) [right=of theta,label=below:z] {};
-  \node[main] (beta) [above=of z,label=below:$\beta$] { };
-  \node[main, fill = black!10] (w) [right=of z,label=below:w] { };
-  \path (alpha) edge [connect] (theta)
-        (theta) edge [connect] (z)
-        (z) edge [connect] (w)
-        (beta) edge [connect] (w);
-  \node[rectangle, inner sep=0mm, fit= (z) (w),label=below right:N, xshift=13mm] {};
-  \node[rectangle, inner sep=4.4mm,draw=black!100, fit= (z) (w)] {};
-  \node[rectangle, inner sep=4.6mm, fit= (z) (w),label=below right:M, xshift=12.5mm] {};
-  \node[rectangle, inner sep=9mm, draw=black!100, fit = (theta) (z) (w)] {};
+  \node[main] (alpha) {$\alpha$};
+  \node[main] (theta) [right=of alpha] {$\theta$};
+  \node[main] (z) [right=of theta] {$z$};
+  \node[main] (beta) [above=of z] {$\beta$};
+  \node[main, fill=black!10] (w) [right=of z] {$w$};
+  \edge {alpha} {theta};
+  \edge {theta} {z};
+  \edge {z,beta} {w};
+  \plate {words} {(z)(w)} {$N_m$};
+  \plate {docs} {(theta)(z)(w)(words.south east)(words.north west)} {$M$};
 \end{tikzpicture}
 \end{figure}
-
 \end{frame}
 
 
 \begin{frame}{Latent Dirichlet Allocation: Some Details}
-
 \begin{itemize}
 \item We use $K = 30$ topics for our resulting model.
 \item What we ultimately care about are $\theta$ and $\beta$.
 \item $\theta$ corresponds to how likely a topic is to appear in a document.
 \item $\beta$ corresponds to how likely each word is to be associated with each topic.
 \end{itemize}
-
 \end{frame}
 
 
 \begin{frame}{Latent Dirichlet Allocation: Some Details}
-
 \begin{itemize}
 \item Some questions we want to answer with LDA
 \begin{itemize}
 \item Can we see sensible topics in the LDA output?
+\item What are the most common topics of the emails?
 \item Who is associated most with each issue?
 \item Do the topics proportions for each email line up with real world events?
 \item Can we predict the source of a given email?
 \end{itemize}
 \end{itemize}
-
 \end{frame}
 
 
+\begin{frame}{Exploring Topics}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.99\linewidth]{../images/topic_words.pdf}
+\label{fig:topics}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Primary Topic Frequency}
+\begin{columns}
+
+  \column{.7\textwidth}
+  \begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{../images/topic_desc.png}
+  \label{fig:topics_desc}
+  \end{figure}
+
+  \column{.3\textwidth}
+  \begin{figure}[h]
+  \centering
+  \includegraphics[height=0.75\textheight]{../images/topic_freq.png}
+  \label{fig:topics_freq}
+  \end{figure}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Some ``Not'' Interesting Topics}
+\begin{table}[h]
+\centering
+\label{topic_common_words}
+\scalebox{0.8}{
+\begin{tabular}{cccccc}
+\toprule
+Common 1 & Common 2 & Common 3 & Logistics & Meeting & Communication \\
+\midrule
+know & think & will & secretari & meet & call \\
+just & like & work & depart & reuters & huma \\
+want & good & week & office & follow & abedin \\
+let & say & need & room & update & schedul \\
+ask & dont & next & state & list & sheet \\
+come & look & also & arriv & happi & request \\
+tri & got & plan & rout & monday & speak \\
+sure & tell & start & privat & schedule & readout \\
+thx & thing & issu & office & set & calls \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
+
 
 \begin{frame}{Some Interesting Topics}
-
 \begin{table}[h]
 \centering
 \label{topic_top_words}
 \scalebox{0.8}{
 \begin{tabular}{cccccc}
-\hline
+\toprule
 Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
-\hline
+\midrule
 israel & democrat & libya & afghanistan & develop & presid \\
 isra & republican & secur & pakistan & state & obama \\
 peace & american & travel & afghan & support & said \\
@@ -204,41 +319,37 @@ netanyahu & parti & iraq & general & program & white \\
 east & elect & embassi & karzai & effort & administr \\
 negoti & obama & attack & offici & intern & polici \\
 arab & percent & kill & war & work & aid \\
-state & candid & march & forc & includ & advis
-
+state & candid & march & forc & includ & advis \\
+\bottomrule
 \end{tabular}
 }
 \end{table}
-
 \end{frame}
 
 
 \begin{frame}{Topic Importance Over Time}
-
 \begin{figure}[h]
 \centering
-\subfigure[Israel]{\label{fig:t1}\includegraphics[width=29mm]{../images/time_plot6.pdf}}
-\subfigure[Elections]{\label{fig:t2}\includegraphics[width=29mm]{../images/time_plot11.pdf}}
-\subfigure[Libya]{\label{fig:t3}\includegraphics[width=29mm]{../images/time_plot18.pdf}}
-\subfigure[Afghanistan]{\label{fig:t4}\includegraphics[width=29mm]{../images/time_plot27.pdf}}
-\subfigure[Int. Dev.]{\label{fig:t5}\includegraphics[width=29mm]{../images/time_plot23.pdf}}
-\subfigure[Obama]{\label{fig:t6}\includegraphics[width=29mm]{../images/time_plot25.pdf}}
+\subfigure[Israel]{\label{fig:t1}\includegraphics[width=0.25\linewidth]{../images/time_plot6.pdf}}
+\subfigure[Elections]{\label{fig:t2}\includegraphics[width=0.25\linewidth]{../images/time_plot11.pdf}}
+\subfigure[Libya]{\label{fig:t3}\includegraphics[width=0.25\linewidth]{../images/time_plot18.pdf}}
+\subfigure[Afghanistan]{\label{fig:t4}\includegraphics[width=0.25\linewidth]{../images/time_plot27.pdf}}
+\subfigure[Int. Dev.]{\label{fig:t5}\includegraphics[width=0.25\linewidth]{../images/time_plot23.pdf}}
+\subfigure[Obama]{\label{fig:t6}\includegraphics[width=0.25\linewidth]{../images/time_plot25.pdf}}
 \label{fig:topic_time_plots}
 \end{figure}
-
 \end{frame}
 
 
 \begin{frame}{Who Says What?}
-
 \begin{table}[h]
 \centering
 \label{topic_sources}
-\scalebox{0.5}{
+\scalebox{0.58}{
 \begin{tabular}{cccccc}
-\hline
+\toprule
 Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
-\hline
+\midrule
 Sidney Blumenthal & SB & Huma Abedin & Judith McHale & JM & SB \\
 (SB) & & (HA) & (JM) & & \\
 \noalign{\vskip 7mm}
@@ -253,54 +364,67 @@ AMS & CM & Monica Hanley & JS & CM & HA \\
 \noalign{\vskip 7mm}
 Hillary Clinton & HA & SB & Richard Verma & JS & HC \\
 (HC) & & & (RV) & & \\
-
+\bottomrule
 \end{tabular}
 }
 \end{table}
-
 \end{frame}
 
 
-\begin{frame}{Multinomial Logistic Regression}
+% \begin{frame}{Multinomial Logistic Regression}
+% \begin{itemize}
+% \item We next want to ask can we predict who said what?
+% \item To answer this question we employ multinomial regression.
+% \item We take a subset of people who sent emails, only those who have more that 100 emails sent and try prediction for these.
+% \end{itemize}
+% \end{frame}
 
+
+% \begin{frame}{Multinomial Logistic Regression Results}
+% \begin{table}[h]
+% \centering
+% \label{multinomial_results}
+% \scalebox{0.7}{
+% \begin{tabular}{ccc}
+% \toprule
+% Source & Success Rate & Testing Observations \\
+% \midrule
+% Hillary Clinton & 0.74 & 849 \\
+% Philippe Reines & 0.06 & 34 \\
+% Claire Coleman & 0.52 & 27 \\
+% Lauren Jiloty & 0.42 & 71 \\
+% Huma Abedin & 0.36 & 376 \\
+% Jake Sullivan & 0.23 & 410 \\
+% Sidney Blumenthal & 0.29 & 87 \\
+% Cherly Mills & 0.31 & 491 \\
+% Anne-Marie Slaughter & 0.36 & 42 \\
+% Monica Hanley & 0.09 & 53 \\
+% Judith McHale & 0.25 & 28 \\
+% Robert Russo & 0.00 & 10 \\
+% Richard Verma & 0.26 & 19 \\
+% Wendy Sherman & 0.08 & 12 \\
+% Melanne Verveer & 0.30 & 30 \\
+% Lona Valmoro & 0.34 & 41 \\
+% \bottomrule
+% \end{tabular}
+% }
+% \end{table}
+% \end{frame}
+
+
+\begin{frame}{Conclusion}
 \begin{itemize}
-\item We next want to ask can we predict who said what?
-\item To answer this question we employ multinomial regression.
-\item We take a subset of people who sent emails, only those who have more that 100 emails sent and try prediction for these.
+\item We've broken the corpus down to a level where we can effectively analyze it and draw conclusions using both human and statistical analysis
+\item This has only been a sample of the many questions we could address using the LDA output
+\item Possible future directions
+  \begin{itemize}
+  \item Some emails are redacted, how do email topics relate to this
+  \item Correlation between topics, what topics appear together
+  \item Predicting senders or receivers based on email text
+  \end{itemize}
 \end{itemize}
-
 \end{frame}
 
 
-\begin{frame}{Multinomial Logistic Regression Results}
-
-\begin{table}[h]
-\centering
-\label{multinomial_results}
-\scalebox{0.7}{
-\begin{tabular}{ccc}
-\hline
-Source & Success Rate & Testing Observations \\
-Hillary Clinton & 0.74 & 849 \\
-Philippe Reines & 0.06 & 34 \\
-Claire Coleman & 0.52 & 27 \\
-Lauren Jiloty & 0.42 & 71 \\
-Huma Abedin & 0.36 & 376 \\
-Jake Sullivan & 0.23 & 410 \\
-Sidney Blumenthal & 0.29 & 87 \\
-Cherly Mills & 0.31 & 491 \\
-Anne-Marie Slaughter & 0.36 & 42 \\
-Monica Hanley & 0.09 & 53 \\
-Judith McHale & 0.25 & 28 \\
-Robert Russo & 0.00 & 10 \\
-Richard Verma & 0.26 & 19 \\
-Wendy Sherman & 0.08 & 12 \\
-Melanne Verveer & 0.30 & 30 \\
-Lona Valmoro & 0.34 & 41
-\end{tabular}
-}
-\end{table}
-
-\end{frame}
 
 \end{document}
