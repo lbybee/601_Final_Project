@@ -135,6 +135,17 @@
 \begin{itemize}
 \item From 2008 to 2013, Hillary Clinton and some of her staff used a private email server for much of their communication
 \item In response to FOIA requests, the State Department has released pdfs of roughly 30,000 of these emails, with roughly 8,000 sent by Clinton
+\item We mostly want to condense and explore the data
+  \begin{itemize}
+  \item Break down a huge interpretation problem to a human-sized one
+  \item Find specific and relatable observations, not just statistical ones
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Data}
+\begin{itemize}
 \item We have a dataset of all these released emails, including sender and receiver information\footnote{Thanks to Ben Hamner and the WSJ for making their code and data available, respectively.}
 \pause\item Bag-of-words model
   \begin{itemize}
@@ -227,6 +238,7 @@
 \item Some questions we want to answer with LDA
 \begin{itemize}
 \item Can we see sensible topics in the LDA output?
+\item What are the most common topics of the emails?
 \item Who is associated most with each issue?
 \item Do the topics proportions for each email line up with real world events?
 \item Can we predict the source of a given email?
@@ -234,6 +246,60 @@
 \end{itemize}
 \end{frame}
 
+
+\begin{frame}{Exploring Topics}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.99\linewidth]{../images/topic_words.pdf}
+\label{fig:topics}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Primary Topic Frequency}
+\begin{columns}
+
+  \column{.7\textwidth}
+  \begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\linewidth]{../images/topic_desc.png}
+  \label{fig:topics_desc}
+  \end{figure}
+
+  \column{.3\textwidth}
+  \begin{figure}[h]
+  \centering
+  \includegraphics[height=0.75\textheight]{../images/topic_freq.png}
+  \label{fig:topics_freq}
+  \end{figure}
+
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Some ``Not'' Interesting Topics}
+\begin{table}[h]
+\centering
+\label{topic_common_words}
+\scalebox{0.8}{
+\begin{tabular}{cccccc}
+\toprule
+Common 1 & Common 2 & Common 3 & Logistics & Meeting & Communication \\
+\midrule
+know & think & will & secretari & meet & call \\
+just & like & work & depart & reuters & huma \\
+want & good & week & office & follow & abedin \\
+let & say & need & room & update & schedul \\
+ask & dont & next & state & list & sheet \\
+come & look & also & arriv & happi & request \\
+tri & got & plan & rout & monday & speak \\
+sure & tell & start & privat & schedule & readout \\
+thx & thing & issu & office & set & calls \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+\end{frame}
 
 
 \begin{frame}{Some Interesting Topics}
@@ -305,44 +371,58 @@ Hillary Clinton & HA & SB & Richard Verma & JS & HC \\
 \end{frame}
 
 
-\begin{frame}{Multinomial Logistic Regression}
+% \begin{frame}{Multinomial Logistic Regression}
+% \begin{itemize}
+% \item We next want to ask can we predict who said what?
+% \item To answer this question we employ multinomial regression.
+% \item We take a subset of people who sent emails, only those who have more that 100 emails sent and try prediction for these.
+% \end{itemize}
+% \end{frame}
+
+
+% \begin{frame}{Multinomial Logistic Regression Results}
+% \begin{table}[h]
+% \centering
+% \label{multinomial_results}
+% \scalebox{0.7}{
+% \begin{tabular}{ccc}
+% \toprule
+% Source & Success Rate & Testing Observations \\
+% \midrule
+% Hillary Clinton & 0.74 & 849 \\
+% Philippe Reines & 0.06 & 34 \\
+% Claire Coleman & 0.52 & 27 \\
+% Lauren Jiloty & 0.42 & 71 \\
+% Huma Abedin & 0.36 & 376 \\
+% Jake Sullivan & 0.23 & 410 \\
+% Sidney Blumenthal & 0.29 & 87 \\
+% Cherly Mills & 0.31 & 491 \\
+% Anne-Marie Slaughter & 0.36 & 42 \\
+% Monica Hanley & 0.09 & 53 \\
+% Judith McHale & 0.25 & 28 \\
+% Robert Russo & 0.00 & 10 \\
+% Richard Verma & 0.26 & 19 \\
+% Wendy Sherman & 0.08 & 12 \\
+% Melanne Verveer & 0.30 & 30 \\
+% Lona Valmoro & 0.34 & 41 \\
+% \bottomrule
+% \end{tabular}
+% }
+% \end{table}
+% \end{frame}
+
+
+\begin{frame}{Conclusion}
 \begin{itemize}
-\item We next want to ask can we predict who said what?
-\item To answer this question we employ multinomial regression.
-\item We take a subset of people who sent emails, only those who have more that 100 emails sent and try prediction for these.
+\item We've broken the corpus down to a level where we can effectively analyze it and draw conclusions using both human and statistical analysis
+\item This has only been a sample of the many questions we could address using the LDA output
+\item Possible future directions
+  \begin{itemize}
+  \item Some emails are redacted, how do email topics relate to this
+  \item Correlation between topics, what topics appear together
+  \item Predicting senders or receivers based on email text
+  \end{itemize}
 \end{itemize}
-\end{frame}
-
-
-\begin{frame}{Multinomial Logistic Regression Results}
-\begin{table}[h]
-\centering
-\label{multinomial_results}
-\scalebox{0.7}{
-\begin{tabular}{ccc}
-\toprule
-Source & Success Rate & Testing Observations \\
-\midrule
-Hillary Clinton & 0.74 & 849 \\
-Philippe Reines & 0.06 & 34 \\
-Claire Coleman & 0.52 & 27 \\
-Lauren Jiloty & 0.42 & 71 \\
-Huma Abedin & 0.36 & 376 \\
-Jake Sullivan & 0.23 & 410 \\
-Sidney Blumenthal & 0.29 & 87 \\
-Cherly Mills & 0.31 & 491 \\
-Anne-Marie Slaughter & 0.36 & 42 \\
-Monica Hanley & 0.09 & 53 \\
-Judith McHale & 0.25 & 28 \\
-Robert Russo & 0.00 & 10 \\
-Richard Verma & 0.26 & 19 \\
-Wendy Sherman & 0.08 & 12 \\
-Melanne Verveer & 0.30 & 30 \\
-Lona Valmoro & 0.34 & 41 \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
 \end{frame}
 
 
