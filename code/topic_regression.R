@@ -13,7 +13,8 @@ people <- table(senders$SenderPerson)
 people <- names(people[people > 100])
 people <- people[people != ""]
 
-data <- data.frame(model@gamma)
+temp <- scale(model@gamma)
+data <- data.frame(temp)
 data$Person <- senders$SenderPerson
 data$Person <- as.factor(data$Person)
 data <- data[data$Person %in% people,]
@@ -50,6 +51,7 @@ coefficients[coefficients < 0] <- 0
 for(i in 1:K){
     coefficients[,i] <- (coefficients[,i] - min(coefficients[,i])) / (max(coefficients[,i]) - min(coefficients[,i]) + 0.0000001)
 }
-mlt <- melt(t(coefficients))
-ggplot(data=mlt) + geom_tile(aes(x=Var1, y=Var2, fill=value))
+mlt <- melt(t(t(coefficients)))
+colnames(mlt) <- c("Sender", "Topic", "value")
+ggplot(data=mlt) + geom_tile(aes(x=Topic, y=Sender, fill=value)) + theme(legend.position = "none", axis.text.x = element_text(angle = 90, hjust = 0))
 ggsave("coefficients.pdf")
