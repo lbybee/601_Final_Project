@@ -1,12 +1,13 @@
 library(tm)
 library(glmnet)
 library(nnet)
+library(ggplot2)
+library(reshape2)
 
 K <- 30
 
 load(paste("../data/model", K, ".rda", sep=""))
 load("../data/senders.rda")
-clusters <- read.table("../data/clusters.txt", header=FALSE)
 
 people <- table(senders$SenderPerson)
 people <- names(people[people > 100])
@@ -41,3 +42,14 @@ for(i in u_names){
     count <- c(count, sum(sub_ind))
     failure <- c(failure, sum(test_pred_names[sub_ind] != test_names[sub_ind]))
 }
+
+coefficients <- data.frame(coef(fit))
+coefficients <- coefficients[,2:(K+1)]
+coefficients[coefficients < 0] <- 0
+#coefficients <- scale(coefficients)
+for(i in 1:K){
+    coefficients[,i] <- (coefficients[,i] - min(coefficients[,i])) / (max(coefficients[,i]) - min(coefficients[,i]) + 0.0000001)
+}
+mlt <- melt(t(coefficients))
+ggplot(data=mlt) + geom_tile(aes(x=Var1, y=Var2, fill=value))
+ggsave("coefficients.pdf")

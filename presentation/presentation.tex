@@ -239,9 +239,8 @@
 \begin{itemize}
 \item Can we see sensible topics in the LDA output?
 \item What are the most common topics of the emails?
-\item Who is associated most with each issue?
-\item Do the topics proportions for each email line up with real world events?
-\item Can we predict the source of a given email?
+\item Do the topics for each email line up with real world events?
+\item Can we associate email senders with topics?
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -373,9 +372,9 @@ Hillary Clinton & HA & SB & Richard Verma & JS & HC \\
 
 \begin{frame}{Multinomial Logistic Regression}
 \begin{itemize}
-\item We next want to ask can we predict who said what?
+\item Can we do a better job associating email senders with topics?
 \item To answer this question we employ multinomial regression.
-\item We take a subset of people who sent emails, only those who have more that 100 emails sent and try prediction for these.
+\item We take a subset of people who sent emails, only those who have more that 100 emails sent and try to predict the sender using the topics.
 \end{itemize}
 \end{frame}
 
@@ -420,7 +419,7 @@ Lona Valmoro & 0.34 & 41 \\
   \begin{itemize}
   \item Some emails are redacted, how do email topics relate to this
   \item Correlation between topics, what topics appear together
-  \item Predicting senders or receivers based on email text
+  \item Incorporating information on receivers 
   \end{itemize}
 \item If this data intrigues you, all the code we used to download, process, and analyze the data is (will be) available at \url{https://github.com/lbybee/601_Final_Project}.
 \end{itemize}
