@@ -91,7 +91,7 @@ gplot = ggplot(data=mlt, aes(x=Topic, y=Sender)) +
     theme(legend.key=element_blank(), panel.background=element_rect(fill="white", colour="white"),
           axis.text.x=element_text(color=colororder, angle=90, hjust=0, vjust=0.5))
 
-pdf('./coefficients.pdf', height=5.5, width=7, family='CM Roman')
+pdf('../images/coefficients.pdf', height=5.5, width=7, family='CM Roman')
 print(gplot)
 dev.off()
 
