@@ -86,7 +86,7 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.scatter(z1, z2, s=10, lw=0.15)
 fig.savefig('../images/mds_2d.pdf', bbox_inches='tight')
-fig.savefig('../images/mds_2d.png', bbox_inches='tight', dpi=900)
+fig.savefig('../images/mds_2d.png', bbox_inches='tight', dpi=400)
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -95,7 +95,7 @@ for g, c in zip(range(10), colors):
                c=c, s=10, lw=0.15, label=str(g))
 ax.legend(scatterpoints=1, markerscale=2)
 fig.savefig('../images/mds_2d_cluster.pdf', bbox_inches='tight')
-fig.savefig('../images/mds_2d_cluster.png', bbox_inches='tight', dpi=900)
+fig.savefig('../images/mds_2d_cluster.png', bbox_inches='tight', dpi=400)
 
 
 fig = plt.figure()
@@ -103,11 +103,11 @@ ax = fig.add_subplot(111, projection='3d')
 ax.scatter(z1, z2, z3, s=10, lw=0.15)
 ax.view_init(29, 46)
 fig.savefig('../images/mds_3d_1.pdf', bbox_inches='tight')
-fig.savefig('../images/mds_3d_1.png', bbox_inches='tight', dpi=900)
+fig.savefig('../images/mds_3d_1.png', bbox_inches='tight', dpi=400)
 
 ax.view_init(-10, 227)
 fig.savefig('../images/mds_3d_2.pdf', bbox_inches='tight')
-fig.savefig('../images/mds_3d_2.png', bbox_inches='tight', dpi=900)
+fig.savefig('../images/mds_3d_2.png', bbox_inches='tight', dpi=400)
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
@@ -117,11 +117,11 @@ for g, c in zip(range(10), colors):
 ax.legend(scatterpoints=1, markerscale=2)
 ax.view_init(29, 46)
 fig.savefig('../images/mds_3d_cluster_1.pdf', bbox_inches='tight')
-fig.savefig('../images/mds_3d_cluster_1.png', bbox_inches='tight', dpi=900)
+fig.savefig('../images/mds_3d_cluster_1.png', bbox_inches='tight', dpi=400)
 
 ax.view_init(-10, 227)
 fig.savefig('../images/mds_3d_cluster_2.pdf', bbox_inches='tight')
-fig.savefig('../images/mds_3d_cluster_2.png', bbox_inches='tight', dpi=900)
+fig.savefig('../images/mds_3d_cluster_2.png', bbox_inches='tight', dpi=400)
 
 
 np.savetxt('../data/clusters.txt', np.column_stack((inds, y_pred)))
