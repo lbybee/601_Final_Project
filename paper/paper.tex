@@ -21,6 +21,11 @@
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{float}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\usepackage{pdflscape}
+\usepackage{afterpage}
 
 % Math
 \usepackage{amsmath}
@@ -154,23 +159,38 @@
 
 
 \section{Introduction}
+From roughly 2008 to 2013, Hillary Clinton and some of her staff used a private family email server for most of he communication. This time period includes her tenure as U.S. Secretary of State, and has therefore become a controversial topic due to the possible security concerns of not using official government servers. Various investigations into the legality and appropriateness of the email server have been launched, and the issue has had/will potentiall have a large effect on Clinton's ongoing presidential campaign.
+
+Due to several Freedom of Information Act (FOIA), the State Department has released the vast majority of the roughly 55,000 pages of emails to the public, leading to an unprecedented opportunity to explore the email usage of a major public figure.
+
+Due to the size of the corpus, reading individual emails in the hope of discovering interesting characteristics is unrealistic. We therefore exploit statistical methods to break this vast analysis problem to a more manageable one, decreasing the scale so that we can more easily apply human and statistical analysis.
+
+In order to tackle this problem, we use classical multi-dimensional scaling and spectral clustering in order to visualize and explore the corpus. We also use a statistical topic model, latent Dirichlet analysis (LDA), in order to identify and analyze the meanings and semantics. Finally, we use the LDA results and other metadata to examine how other covariates, such as email sender and time period sent, are related to the topic of an email.
 
 
 \section{Data}
+The State Department released the raw data in the form of roughly 30,000 pdfs of individual emails from the Clinton server.\footnote{Thanks to Ben Hamner and the Wall Street Journal for making the data processing code (\url{https://github.com/benhamner/hillary-clinton-emails}) and email pdfs (\url{http://graphics.wsj.com/hillary-clinton-email-documents/}) available, respectively.} We first process the pdfs to extract the raw text.\footnote{We used \texttt{pdftotext}, an open-source program used to extract text from pdf files.} From the raw email text, email headers and forward/response information are stripped, leaving only the subject line and body text.
+
+All of our methods use a bag-of-words model, so from this raw data we construct a document term matrix containing vectors of word counts. Some standard data cleaning for text data is also performed, including the removal of punctuation and email addresses, word stemming (combining words with common roots, e.g. calling and called), and removing extremely common words (i.e. stop words) and extremely rare words (words that appear in less than 0.1\% of emails).
+
+After this processing, we are left with a dataset of roughly 28,000 emails and a total vocabulary of over 3,000 words. Note that each word count vector is extremely sparse, so we need statistical methods that can apply in a sparse coordinate setting. Also, methods that can efficiently exploit this sparseness to reduce computation are preferred.
 
 
 \section{Visualization}
-Motivation, cosine distance
+Due to the large size and high dimensionality of the data, we must apply some dimensionality reduction in order to effectively visualize it. We therefore apply classical multi-dimensional scaling, which attempts to place each point in a much smaller dimension such that pairwise distances are preserved.
+
+However, we expect standard Euclidean distance to poorly capture the actual relationships between vectors of word counts. In particular, Euclidean distance is affected by the total number of words, two emails with the exact same word distribution that differ in length could have a very large distance between them. In order to better capture pairwise relationships, we will use a distance metric based on the angles between vectors.
 
 We define the cosine similarity between word frequency vectors $V$ and $W$ to be the cosine of the angle between the two vectors, calculated as
 \begin{equation} \label{eq:cos_sim}
 \cos(\phi) = \frac{\langle V, W \rangle}{\norm{V}\norm{W}}
 \end{equation}
-Since counts must be nonnegative, note that $\phi \leq \pi/2$. This implies that the cosine similarity is always between 0 and 1, with 0 corresponding to parallel vectors and 1 corresponding to orthogonal vectors. So we can define the cosine distance as
+Since counts must be nonnegative, note that $\phi \leq \pi/2$. This implies that the cosine similarity is always between 0 and 1, with 0 corresponding to vectors that are multiples of each other and 1 corresponding to orthogonal vectors (i.e. no shared words). So we can define the cosine distance as
 \begin{equation} \label{eq:cos_dist}
 d(V, W) = 1 - \cos(\phi) = 1 - \frac{\langle V, W \rangle}{\norm{V}\norm{W}}
 \end{equation}
 
+Using this measure of distance, we can construct a distance matrix $D$ and apply MDS. The results for an 8,000 email subset are shown in Figure~\ref{fig:cluster}, plotted in both two and three dimensions. We can see several interesting patterns. The vast majority of emails (roughly 5,000) are contained in the main central grouping, with two large groupings that extend away. Besides these two ``arms,'' however, it is difficult to visually identify other significant structures.
 
 \begin{figure}[htbp] \centering
   \begin{subfigure}[t]{.7\linewidth}
@@ -186,9 +206,22 @@ d(V, W) = 1 - \cos(\phi) = 1 - \frac{\langle V, W \rangle}{\norm{V}\norm{W}}
 \end{figure}
 
 
-\subsection{Multidimensional Scaling}
-
 \subsection{Spectral Clustering}
+In order to better identify structure that may exist in the data, we attempt to apply clustering methods. However, it is important to choose an appropriate clustering method due to the high dimensionality and sparse nature of the data. In particular, we expect centroid-based methods such as Gaussian mixture models and $k$-means clustering to perform poorly in this setting.
+
+Spectral clustering, however, exploits the information contained in the pairwise distances (or, equivalently, the similarities) between points. By using pairwise distances, spectral clustering is particularly well-suited to finding clusters that may not necessarily be spherical or ellipsoidal and that may lie along lower-dimensional manifolds.
+
+To actually apply spectral clustering, we first construct the pairwise similarity matrix $S$ using our cosine similarity as defined in Equation~\ref{eq:cos_sim}. We define the degree matrix $D$ to be a diagonal matrix with $D_{ii} = \sum_j S_{ij}$, and construct the symmatrix normalized Laplacian matrix as
+\begin{equation} \label{eq:laplacian}
+L = I - D^{-1/2} S D^{-1/2}
+\end{equation}
+Then the eigenvectors corresponding to the smallest $k$ eigenvalues of $L$ are computed and $k$-means clustering is performed on these eigenvectors.
+
+Figure~\ref{fig:cluster} classifies each point according to the results of spectral clustering with $k$ clusters. We can see that many of the cluster correspond to  the visually identifiable structures, including clusters that correspond to each of the ``arms.''
+
+By investigating the individual emails, we can also get a sense of what each cluster consists of. For instance, clusters 2 and 4 consist of emails related to calls and communication. In this arm, those closer to the main central clump contain more conversation, while those farther out are much briefer and directly about the call (e.g. ``I'd like to call tomorrow.''). Cluster 3 consists entirely of ``minis,'' summaries of the days schedule sent to Clinton each morning. Emails from cluster 5 are generally requests to print materials, while those from cluster 6 are forwarded news articles.
+
+In general, it seems that spectral clustering does a good job at identifying emails by their structure, but does not tell us much about the meaning of an email. We can tell that an email is regarding a call or is a news headline by what cluster it is in, but not what that call or headline is about. On a related note, it does not do a good job separating the ``regular'' emails. OVer 5,000 of the 8,000 emails depicted fall into clusters 1 or 8, which essentially consist of all the emails without specific identifiable structure. Ideally we would be able to further classify these emails according to subject matter, but clustering does not seem suited to this task.
 
 
 \section{Topic Modeling}
