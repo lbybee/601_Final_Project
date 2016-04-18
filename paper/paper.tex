@@ -1,25 +1,181 @@
-\documentclass{article}
+\documentclass[12pt]{article}
+
+% General
+\usepackage[round]{natbib}
+\usepackage{setspace}
+\usepackage{geometry}
+\usepackage[section]{placeins}
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{titlesec}
+\usepackage[page]{appendix}
+\usepackage{enumerate}
+
+% Tables/Figures
+\usepackage{lscape}
+\usepackage{booktabs}
+\usepackage{rotating}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+
+% Math
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{dsfont}
+
+% \doublespacing
+\onehalfspacing
+% \singlespacing
+
+% \numberwithin{equation}{section}
+
+\geometry{paper=letterpaper, margin=1in}
+\captionsetup{font=small}
+
+% Code
+\usepackage{textcomp}
+\usepackage{sourcecodepro}
+\usepackage{listings}
+\definecolor{commentgrey}{gray}{0.45}
+\definecolor{backgray}{gray}{0.96}
+\lstset{
+  basicstyle=\footnotesize\ttfamily, keywordstyle=\footnotesize,
+  backgroundcolor=\color{backgray}, commentstyle=\color{commentgrey},
+  frame=single, rulecolor=\color{backgray}, showstringspaces=false,
+  breakatwhitespace=true, breaklines=true, upquote=true,
+  numbers=left, numberstyle=\footnotesize\color{commentgrey}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% User-defined LaTeX commands
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Corr}{Corr}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\newcommand*{\expp}[1]{\exp\left(#1\right)}
+\newcommand*{\foralls}{\ \forall \ }
+\newcommand*{\st}{\text{ s.t. }}
+\newcommand*{\E}{\mathbb E}
+\newcommand*{\R}{\mathbb R}
+\newcommand*{\I}{\mathds{1}}
+\newcommand*{\Prob}{\mathbb P}
+\newcommand*{\convas}[1]{\xrightarrow{#1}}
+\newcommand*{\conv}{\convas{}}
+\newcommand*{\cond}{\;\ifnum\currentgrouptype=16 \middle\fi|\;}
+\newcommand*{\defeq}{%
+  \mathrel{\overset{\makebox[0pt]{\mbox{\normalfont\tiny\sffamily def}}}{=}}}
+\newcommand*{\notorth}{\ensuremath{\perp\!\!\!\!\!\!\diagup\!\!\!\!\!\!\perp}}
+\newcommand*{\orth}{\ensuremath{\perp\!\!\!\perp}}
+\newcommand*{\evalat}{\,\big\rvert}
+\newcommand*{\dif}{\,d}
+\newcommand*{\difto}[1]{\,d^#1}
+\newcommand*{\difbot}[1]{\frac{d}{d#1}}
+\newcommand*{\partialbot}[1]{\frac{\partial}{\partial#1}}
+\newcommand*{\m}[1]{\textbf{#1}}
+\newcommand*{\bmath}[1]{\boldsymbol{#1}}
+
+\newcommand*{\yestag}{\addtocounter{equation}{1}\tag{\theequation}}
+\newcommand*{\notaligned}[1]{\noalign{$\displaystyle #1$}}
+\newcommand*{\ttilde}{{\raise.17ex\hbox{$\scriptstyle\sim$}}}
+
+\makeatletter
+\newsavebox{\mybox}\newsavebox{\mysim}
+\newcommand*{\distas}[1]{%
+  \savebox{\mybox}{\hbox{\kern3pt$\scriptstyle#1$\kern3pt}}%
+  \savebox{\mysim}{\hbox{$\sim$}}%
+  \mathbin{\overset{#1}{\kern\z@\resizebox{\wd\mybox}{\ht\mysim}{$\sim$}}}%
+}
+\makeatother
+\newcommand*{\dist}{\sim}
+\newcommand*{\distiid}{\distas{\text{i.i.d}}}
+
+\makeatletter
+\def\moverlay{\mathpalette\mov@rlay}
+\def\mov@rlay#1#2{\leavevmode\vtop{%
+   \baselineskip\z@skip \lineskiplimit-\maxdimen
+   \ialign{\hfil$\m@th#1##$\hfil\cr#2\crcr}}}
+\newcommand*{\charfusion}[3][\mathord]{
+  #1{\ifx#1\mathop\vphantom{#2}\fi\mathpalette\mov@rlay{#2\cr#3}}
+  \ifx#1\mathop\expandafter\displaylimits\fi}
+\makeatother
+\newcommand*{\cupdot}{\charfusion[\mathbin]{\cup}{\cdot}}
+\newcommand*{\bigcupdot}{\charfusion[\mathop]{\bigcup}{\cdot}}
+
+\newcommand*{\mt}[1]{\text{\normalfont #1}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{theorem*}{Theorem}
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{definition*}{Definition}
+\newtheorem{example}{Example}[section]
+\newtheorem*{properties}{Properties}
+
+\newtheoremstyle{algodesc}{}{}{}{}{\bfseries}{.}{ }{}%
+\theoremstyle{algodesc}
+\newtheorem{algodesc}{Algorithm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \begin{document}
 
+\title{Exploring Hillary Clinton's Emails\thanks{STATS 601 final project.}}
+\author{
+    Leland Bybee, Roger Fan, Ryan Vaughn
+}
+\date{\today}
+
+\maketitle
+
+
 \section{Introduction}
 
-\section{Data Summary}
 
-\section{MDS}
+\section{Data}
 
-\section{Spectral Clustering}
 
-\section{TM Background/Estimation}
+\section{Visualization}
+Motivation, cosine distance
 
-\section{Interpreting Topics/Model Selection}
+\subsection{Multidimensional Scaling}
 
-\section{Types of Topics}
+\subsection{Spectral Clustering}
 
-\section{Interesting Topics}
 
-\section{Who Says What/Multinomial Regression}
+\section{Topic Modeling}
+Include model description, estimation strategy, and model selection.
+
+\subsection{Interpreting Topics}
+Include ``grunt work'' of interpreting topics, topic frequency
+
+\subsection{Types of Topics}
+Talk about structural, common word, and semantic topics, including ``interesting'' vs. ``non-interesting'' topics, discuss strengths of model in comparison to MDS
+
+\subsection{Topic Analysis}
+Analyze some specific topics, compare use over time and how it correlates with related events
+
+
+\section{Email Sender Prediction}
+Talk about the who says what table
+
+\subsection{Multinomial Logistic Regression}
+Quickly describe model and discuss results
+
 
 \section{Conclusion}
+
+
 
 \end{document}
