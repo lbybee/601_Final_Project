@@ -7,7 +7,7 @@
 \usepackage[section]{placeins}
 \usepackage[hidelinks]{hyperref}
 \usepackage{graphicx}
-\usepackage{color}
+\usepackage{xcolor}
 \usepackage{titlesec}
 \usepackage[page]{appendix}
 \usepackage{enumerate}
@@ -28,6 +28,8 @@
 \usepackage{amsthm}
 \usepackage{mathtools}
 \usepackage{dsfont}
+
+\usepackage{tikz}
 
 % \doublespacing
 \onehalfspacing
@@ -128,6 +130,18 @@
 \newtheorem{algodesc}{Algorithm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newcommand*{\colsquare}[3][-3.5pt]{\tikz[baseline=-0.5ex]\draw[#2, fill=#2] (0,#1) rectangle ++(#3,#3);}%
+\definecolor{cmeet}{HTML}{E31A1C}
+\definecolor{cmideast}{HTML}{1F78B4}
+\definecolor{cstaff}{HTML}{A6CEE3}
+\definecolor{cpolitics}{HTML}{33A02C}
+\definecolor{cterror}{HTML}{B2DF8A}
+\definecolor{cforeign}{HTML}{FB9A99}
+\definecolor{cpress}{HTML}{FF7F00}
+\definecolor{chill}{HTML}{6A3D9A}
+\definecolor{ccommu}{HTML}{CAB2D6}
+\definecolor{ccomm}{HTML}{FDBF6F}
+
 
 \begin{document}
 
@@ -149,6 +163,42 @@
 \section{Visualization}
 Motivation, cosine distance
 
+We define the cosine similarity between word frequency vectors $V$ and $W$ to be the cosine of the angle between the two vectors, calculated as
+\begin{equation} \label{eq:cos_sim}
+\cos(\phi) = \frac{\langle V, W \rangle}{\norm{V}\norm{W}}
+\end{equation}
+Since counts must be nonnegative, note that $\phi \leq \pi/2$. This implies that the cosine similarity is always between 0 and 1, with 0 corresponding to parallel vectors and 1 corresponding to orthogonal vectors. So we can define the cosine distance as
+\begin{equation} \label{eq:cos_dist}
+d(V, W) = 1 - \cos(\phi) = 1 - \frac{\langle V, W \rangle}{\norm{V}\norm{W}}
+\end{equation}
+
+\begin{figure}[htb] \centering
+  \begin{subfigure}[t]{.49\linewidth}
+    \includegraphics[width=\linewidth]{../images/mds_2d.png}
+    \caption{2 Dimensions} \label{fig:mds:2d}
+  \end{subfigure}
+  \begin{subfigure}[t]{.49\linewidth}
+    \includegraphics[width=\linewidth]{../images/mds_3d_1.png}
+    \caption{3 Dimensions} \label{fig:mds:3d}
+  \end{subfigure}
+  \caption{Visualization of a 8,000 email subset using classical multi-dimensional scaling. The distance metric used is cosine distance as defined in Equation~\ref{eq:cos_dist}.}
+  \label{fig:mds}
+\end{figure}
+
+\begin{figure}[htbp] \centering
+  \begin{subfigure}[t]{.7\linewidth}
+    \includegraphics[width=\linewidth]{../images/mds_2d_cluster.png}
+    \caption{2 Dimensions} \label{fig:cluster:2d}
+  \end{subfigure}
+  \begin{subfigure}[t]{.7\linewidth}
+    \includegraphics[width=\linewidth]{../images/mds_3d_cluster_1.png}
+    \caption{3 Dimensions} \label{fig:cluster:3d}
+  \end{subfigure}
+  \caption{Visualization of the same 8,000 email subset with coloring according to the results from spectral clustering.}
+  \label{fig:cluster}
+\end{figure}
+
+
 \subsection{Multidimensional Scaling}
 
 \subsection{Spectral Clustering}
@@ -159,6 +209,64 @@ Include model description, estimation strategy, and model selection.
 
 \subsection{Interpreting Topics}
 Include ``grunt work'' of interpreting topics, topic frequency
+
+\begin{table}[htb] \centering
+\begin{tabular}{rcl}
+  \toprule
+  \colsquare{cterror}{10pt} & Terrorism & 5, 22 \\
+  \colsquare{cmideast}{10pt} & Middle East & 6, 18, 19, 27, 29 \\
+  \colsquare{cforeign}{10pt} & Foreign Policy & 2, 7, 13, 21, 23, 26 \\
+  \colsquare{cpolitics}{10pt} & Politics & 11, 17, 25 \\
+  \colsquare{cstaff}{10pt} & Staff & 16, 20 \\
+  \colsquare{cpress}{10pt} & Press & 4 \\
+  \colsquare{chill}{10pt} & Hillary & 12 \\
+  \colsquare{cmeet}{10pt} & Meetings & 9, 10, 24, 28, 30 \\
+  \colsquare{ccommu}{10pt} & Communication & 1 \\
+  \colsquare{ccomm}{10pt} & Common & 3, 8, 14, 15 \\
+  \bottomrule
+\end{tabular}
+\caption{Topic Categorization}
+\label{tab:topic_cat}
+\end{table}
+
+\begin{table}[htb] \centering
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{ccccccccccccccccccccccccc}
+  \toprule
+  \colsquare[-3pt]{cforeign}{16pt} &
+  \colsquare[-3pt]{cmeet}{16pt} &
+  \colsquare[-3pt]{cmeet}{16pt} &
+  \colsquare[-3pt]{cmeet}{16pt} &
+  \colsquare[-3pt]{cmeet}{16pt} &
+  \colsquare[-3pt]{cpress}{16pt} &
+  \colsquare[-3pt]{cmeet}{16pt} &
+  \colsquare[-3pt]{cmideast}{16pt} &
+  \colsquare[-3pt]{cmideast}{16pt} &
+  \colsquare[-3pt]{cstaff}{16pt} &
+  \colsquare[-3pt]{cstaff}{16pt} &
+  \colsquare[-3pt]{chill}{16pt} &
+  \colsquare[-3pt]{cforeign}{16pt} &
+  \colsquare[-3pt]{cpolitics}{16pt} &
+  \colsquare[-3pt]{cmideast}{16pt} &
+  \colsquare[-3pt]{cmideast}{16pt} &
+  \colsquare[-3pt]{cforeign}{16pt} &
+  \colsquare[-3pt]{cmideast}{16pt} &
+  \colsquare[-3pt]{cterror}{16pt} &
+  \colsquare[-3pt]{cforeign}{16pt} &
+  \colsquare[-3pt]{cpolitics}{16pt} &
+  \colsquare[-3pt]{cforeign}{16pt} &
+  \colsquare[-3pt]{cforeign}{16pt} &
+  \colsquare[-3pt]{cpolitics}{16pt} &
+  \colsquare[-3pt]{cterror}{16pt} \\
+  21 & 28 & 30 & 9 & 10 & 4 & 24 & 29 & 18 & 20 & 16 & 12 &
+  13 & 17 & 19 & 27 & 23 & 6 & 22 & 2 & 25 & 26 & 7 & 11 & 5 \\
+  \bottomrule
+\end{tabular}
+\setlength{\tabcolsep}{6pt}
+\caption{Primary Topic Frequency}
+\label{tab:topic_freq}
+\end{table}
+
 
 \subsection{Types of Topics}
 Talk about structural, common word, and semantic topics, including ``interesting'' vs. ``non-interesting'' topics, discuss strengths of model in comparison to MDS
