@@ -131,16 +131,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand*{\colsquare}[3][-3.5pt]{\tikz[baseline=-0.5ex]\draw[#2, fill=#2] (0,#1) rectangle ++(#3,#3);}%
-\definecolor{cmeet}{HTML}{E31A1C}
-\definecolor{cmideast}{HTML}{1F78B4}
+\definecolor{cmeet}{HTML}{B2DF8A}
+\definecolor{cmideast}{HTML}{FDBF6F}
 \definecolor{cstaff}{HTML}{A6CEE3}
 \definecolor{cpolitics}{HTML}{33A02C}
-\definecolor{cterror}{HTML}{B2DF8A}
-\definecolor{cforeign}{HTML}{FB9A99}
-\definecolor{cpress}{HTML}{FF7F00}
+\definecolor{cterror}{HTML}{E31A1C}
+\definecolor{cforeign}{HTML}{FF7F00}
+\definecolor{cpress}{HTML}{FB9A99}
 \definecolor{chill}{HTML}{6A3D9A}
-\definecolor{ccommu}{HTML}{CAB2D6}
-\definecolor{ccomm}{HTML}{FDBF6F}
+\definecolor{ccomm}{HTML}{1F78B4}
 
 
 \begin{document}
@@ -220,8 +219,7 @@ Include ``grunt work'' of interpreting topics, topic frequency
   \colsquare{cstaff}{10pt} & Staff & 16, 20 \\
   \colsquare{cpress}{10pt} & Press & 4 \\
   \colsquare{chill}{10pt} & Hillary & 12 \\
-  \colsquare{cmeet}{10pt} & Meetings & 9, 10, 24, 28, 30 \\
-  \colsquare{ccommu}{10pt} & Communication & 1 \\
+  \colsquare{cmeet}{10pt} & Meetings & 1, 9, 10, 24, 28, 30 \\
   \colsquare{ccomm}{10pt} & Common & 3, 8, 14, 15 \\
   \bottomrule
 \end{tabular}
@@ -231,9 +229,10 @@ Include ``grunt work'' of interpreting topics, topic frequency
 
 \begin{table}[htb] \centering
 \setlength{\tabcolsep}{1pt}
-\begin{tabular}{ccccccccccccccccccccccccc}
+\begin{tabular}{cccccccccccccccccccccccccc}
   \toprule
   \colsquare[-3pt]{cforeign}{16pt} &
+  \colsquare[-3pt]{cmeet}{16pt} &
   \colsquare[-3pt]{cmeet}{16pt} &
   \colsquare[-3pt]{cmeet}{16pt} &
   \colsquare[-3pt]{cmeet}{16pt} &
@@ -243,23 +242,25 @@ Include ``grunt work'' of interpreting topics, topic frequency
   \colsquare[-3pt]{cmideast}{16pt} &
   \colsquare[-3pt]{cmideast}{16pt} &
   \colsquare[-3pt]{cstaff}{16pt} &
-  \colsquare[-3pt]{cstaff}{16pt} &
   \colsquare[-3pt]{chill}{16pt} &
-  \colsquare[-3pt]{cforeign}{16pt} &
+  \colsquare[-3pt]{cstaff}{16pt} &
   \colsquare[-3pt]{cpolitics}{16pt} &
-  \colsquare[-3pt]{cmideast}{16pt} &
+  \colsquare[-3pt]{cforeign}{16pt} &
   \colsquare[-3pt]{cmideast}{16pt} &
   \colsquare[-3pt]{cforeign}{16pt} &
   \colsquare[-3pt]{cmideast}{16pt} &
   \colsquare[-3pt]{cterror}{16pt} &
+  \colsquare[-3pt]{cmideast}{16pt} &
   \colsquare[-3pt]{cforeign}{16pt} &
   \colsquare[-3pt]{cpolitics}{16pt} &
   \colsquare[-3pt]{cforeign}{16pt} &
   \colsquare[-3pt]{cforeign}{16pt} &
   \colsquare[-3pt]{cpolitics}{16pt} &
   \colsquare[-3pt]{cterror}{16pt} \\
-  21 & 28 & 30 & 9 & 10 & 4 & 24 & 29 & 18 & 20 & 16 & 12 &
-  13 & 17 & 19 & 27 & 23 & 6 & 22 & 2 & 25 & 26 & 7 & 11 & 5 \\
+  21 & 1 & 28 & 30 & 10 & 9 & 4 & 24 & 18 & 29 & 16 & 12 & 20 &
+  17 & 13 & 19 & 23 & 27 & 22 & 6 & 2 & 25 & 26 & 7 & 11 & 5 \\
+  \midrule
+  \multicolumn{13}{l}{Most Frequent} & \multicolumn{13}{r}{Least Frequent} \\
   \bottomrule
 \end{tabular}
 \setlength{\tabcolsep}{6pt}
