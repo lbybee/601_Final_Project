@@ -52,7 +52,7 @@ coefficients <- data.frame(coef(fit))
 coefficients <- coefficients[,2:(K+1)]
 #coefficients[coefficients < -1] <- -1
 #coefficients[coefficients < 0] <- 0
-coefficients <- scale(coefficients, center=FALSE)
+coefficients <- scale(coefficients)
 #for(i in 1:K){
 #    coefficients[,i] <- (coefficients[,i] - min(coefficients[,i])) / (max(coefficients[,i]) - min(coefficients[,i]) + 0.0000001)
 #}
