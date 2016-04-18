@@ -52,7 +52,7 @@ coefficients <- data.frame(coef(fit))
 coefficients <- coefficients[,2:(K+1)]
 #coefficients[coefficients < -1] <- -1
 #coefficients[coefficients < 0] <- 0
-coefficients <- scale(coefficients)
+coefficients <- scale(coefficients, center=FALSE)
 #for(i in 1:K){
 #    coefficients[,i] <- (coefficients[,i] - min(coefficients[,i])) / (max(coefficients[,i]) - min(coefficients[,i]) + 0.0000001)
 #}
@@ -79,19 +79,18 @@ legend = c('Terrorism'='#e31a1c',
            'Hillary'='#6a3d9a',
            'Meetings'='#b2df8a',
            'Common'='#1f78b4')
-
 a = data.frame(x=rep(1, 9), y=rep(1, 9), z=cats)
 
 gplot = ggplot(data=mlt, aes(x=Topic, y=Sender)) +
     geom_tile(aes(fill=Coefficient), color="white") +
-    geom_line(data=a, aes(x=x, y=y, color=z), alpha=0.0) +
+    geom_line(data=a, aes(x=x, y=y, color=z), alpha=0.0, size=1.3) +
     scale_fill_gradient2(midpoint=0, low="#4d9221", high="#c51b7d") +
     scale_color_manual(name='Category', values=legend, breaks=cats) +
     guides(color=guide_legend(override.aes=list(alpha=1))) +
     theme(legend.key=element_blank(), panel.background=element_rect(fill="white", colour="white"),
           axis.text.x=element_text(color=colororder, angle=90, hjust=0, vjust=0.5))
 
-pdf('../images/coefficients.pdf', height=5.5, width=7, family='CM Roman')
+pdf('../images/coefficients.pdf', height=5.5, width=6.5, family='CM Roman')
 print(gplot)
 dev.off()
 

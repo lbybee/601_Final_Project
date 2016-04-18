@@ -171,18 +171,18 @@ Since counts must be nonnegative, note that $\phi \leq \pi/2$. This implies that
 d(V, W) = 1 - \cos(\phi) = 1 - \frac{\langle V, W \rangle}{\norm{V}\norm{W}}
 \end{equation}
 
-\begin{figure}[htb] \centering
-  \begin{subfigure}[t]{.49\linewidth}
-    \includegraphics[width=\linewidth]{../images/mds_2d.png}
-    \caption{2 Dimensions} \label{fig:mds:2d}
-  \end{subfigure}
-  \begin{subfigure}[t]{.49\linewidth}
-    \includegraphics[width=\linewidth]{../images/mds_3d_1.png}
-    \caption{3 Dimensions} \label{fig:mds:3d}
-  \end{subfigure}
-  \caption{Visualization of a 8,000 email subset using classical multi-dimensional scaling. The distance metric used is cosine distance as defined in Equation~\ref{eq:cos_dist}.}
-  \label{fig:mds}
-\end{figure}
+% \begin{figure}[htb] \centering
+%   \begin{subfigure}[t]{.49\linewidth}
+%     \includegraphics[width=\linewidth]{../images/mds_2d.png}
+%     \caption{2 Dimensions} \label{fig:mds:2d}
+%   \end{subfigure}
+%   \begin{subfigure}[t]{.49\linewidth}
+%     \includegraphics[width=\linewidth]{../images/mds_3d_1.png}
+%     \caption{3 Dimensions} \label{fig:mds:3d}
+%   \end{subfigure}
+%   \caption{Visualization of a 8,000 email subset using classical multi-dimensional scaling. The distance metric used is cosine distance as defined in Equation~\ref{eq:cos_dist}.}
+%   \label{fig:mds}
+% \end{figure}
 
 \begin{figure}[htbp] \centering
   \begin{subfigure}[t]{.7\linewidth}
@@ -281,6 +281,12 @@ Talk about the who says what table
 
 \subsection{Multinomial Logistic Regression}
 Quickly describe model and discuss results
+
+\begin{figure}[htb] \centering
+  \includegraphics[width=0.95\linewidth]{../images/coefficients.pdf}
+  \caption{Normalized coefficients from a multinomial logistic regression of email sender on LDA topic proportions.}
+  \label{fig:coefficients}
+\end{figure}
 
 
 \section{Conclusion}
