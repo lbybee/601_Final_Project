@@ -23,3 +23,5 @@
 *.rda
 emails.csv
 emails_hill.csv
+*.pdf
+!images/*.pdf
