@@ -171,18 +171,6 @@ Since counts must be nonnegative, note that $\phi \leq \pi/2$. This implies that
 d(V, W) = 1 - \cos(\phi) = 1 - \frac{\langle V, W \rangle}{\norm{V}\norm{W}}
 \end{equation}
 
-% \begin{figure}[htb] \centering
-%   \begin{subfigure}[t]{.49\linewidth}
-%     \includegraphics[width=\linewidth]{../images/mds_2d.png}
-%     \caption{2 Dimensions} \label{fig:mds:2d}
-%   \end{subfigure}
-%   \begin{subfigure}[t]{.49\linewidth}
-%     \includegraphics[width=\linewidth]{../images/mds_3d_1.png}
-%     \caption{3 Dimensions} \label{fig:mds:3d}
-%   \end{subfigure}
-%   \caption{Visualization of a 8,000 email subset using classical multi-dimensional scaling. The distance metric used is cosine distance as defined in Equation~\ref{eq:cos_dist}.}
-%   \label{fig:mds}
-% \end{figure}
 
 \begin{figure}[htbp] \centering
   \begin{subfigure}[t]{.7\linewidth}
@@ -193,7 +181,7 @@ d(V, W) = 1 - \cos(\phi) = 1 - \frac{\langle V, W \rangle}{\norm{V}\norm{W}}
     \includegraphics[width=\linewidth]{../images/mds_3d_cluster_1.png}
     \caption{3 Dimensions} \label{fig:cluster:3d}
   \end{subfigure}
-  \caption{Visualization of the same 8,000 email subset with coloring according to the results from spectral clustering.}
+  \caption{Visualization of a 8,000 email subset using classical multi-dimensional scaling and with coloring according to the results from spectral clustering. The similarity and distance metrics used for spectral clustering and MDS, respectively, are cosine similarity and distance as defined in Equations~\ref{eq:cos_sim} and~\ref{eq:cos_dist}.}
   \label{fig:cluster}
 \end{figure}
 
