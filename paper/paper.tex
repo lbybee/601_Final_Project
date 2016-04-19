@@ -296,16 +296,98 @@ Talk about structural, common word, and semantic topics, including ``interesting
 \subsection{Topic Analysis}
 Analyze some specific topics, compare use over time and how it correlates with related events
 
+\begin{table}[h]
+\centering
+\label{topic_top_words}
+\scalebox{0.8}{
+\begin{tabular}{cccccc}
+\toprule
+Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
+\midrule
+israel & democrat & libya & afghanistan & develop & presid \\
+isra & republican & secur & pakistan & state & obama \\
+peace & american & travel & afghan & support & said \\
+palestinian & polit & libyan & militari & global & hous \\
+netanyahu & parti & iraq & general & program & white \\
+east & elect & embassi & karzai & effort & administr \\
+negoti & obama & attack & offici & intern & polici \\
+arab & percent & kill & war & work & aid \\
+state & candid & march & forc & includ & advis \\
+\bottomrule
+\end{tabular}
+}
+\caption{Some interesting content topics}
+\label{tab:content_topics}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[Israel]{.30\linewidth}
+    \includegraphics[width=\linewidth]{../images/time_plot6.pdf}
+    \caption{Israel} \label{fig:t1}
+\end{subfigure}
+\begin{subfigure}[Election]{.30\linewidth}
+    \includegraphics[width=\linewidth]{../images/time_plot11.pdf}
+    \caption{Election} \label{fig:t2}
+\end{subfigure}
+\begin{subfigure}[Libya]{.30\linewidth}
+    \includegraphics[width=\linewidth]{../images/time_plot18.pdf}
+    \caption{Libya} \label{fig:t3}
+\end{subfigure}
+\begin{subfigure}[Afghanistan]{.30\linewidth}
+    \includegraphics[width=\linewidth]{../images/time_plot27.pdf}
+    \caption{Afghanistan} \label{fig:t4}
+\end{subfigure}
+\begin{subfigure}[Int. Dev.]{.30\linewidth}
+    \includegraphics[width=\linewidth]{../images/time_plot23.pdf}
+    \caption{Int. Dev.} \label{fig:t5}
+\end{subfigure}
+\begin{subfigure}[Obama]{.30\linewidth}
+    \includegraphics[width=\linewidth]{../images/time_plot25.pdf}
+    \caption{Obama} \label{fig:t6}
+\end{subfigure}
+\label{fig:topic_time_plots}
+\end{figure}
 
 \section{Email Sender Prediction}
 Talk about the who says what table
+
+\begin{table}[h]
+\centering
+\label{topic_sources}
+\scalebox{0.70}{
+\begin{tabular}{cccccc}
+\toprule
+Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
+\midrule
+Sidney Blumenthal & SB & Huma Abedin & Judith McHale & JM & SB \\
+(SB) & & (HA) & (JM) & & \\
+\noalign{\vskip 5mm}
+HA & Philippe Reines & Wendy Sherman & HA & Melanne Verveer & PR \\
+& (PR) & (WS) & & (MV) & \\
+\noalign{\vskip 5mm}
+Jake Sullivan & JM & JS & MV & Anne-Marie & Cherly Mills \\
+(JS) & & & & Slaughter (AMS) & (CM)\\
+\noalign{\vskip 5mm}
+AMS & CM & Monica Hanley & JS & CM & HA \\
+& & (MH) & & & \\
+\noalign{\vskip 5mm}
+Hillary Clinton & HA & SB & Richard Verma & JS & HC \\
+(HC) & & & (RV) & & \\
+\bottomrule
+\end{tabular}
+}
+\caption{Primary sources for interesting topics}
+\label{tab:top_sources}
+\end{table}
+
 
 \subsection{Multinomial Logistic Regression}
 Quickly describe model and discuss results
 
 \begin{figure}[htb] \centering
   \includegraphics[width=0.95\linewidth]{../images/coefficients.pdf}
-  \caption{Normalized coefficients from a multinomial logistic regression of email sender on LDA topic proportions.}
+  \caption{Standardized coefficients from a multinomial logistic regression of email sender on LDA topic proportions.}
   \label{fig:coefficients}
 \end{figure}
 

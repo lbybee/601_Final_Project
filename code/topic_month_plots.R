@@ -1,6 +1,7 @@
 library(lubridate)
 library(ggplot2)
 library(tm)
+library(extrafont)
 
 K <- 30
 
@@ -17,7 +18,9 @@ temp <- agg[,2:(K+1)]
 agg <- aggregate(temp, list(agg$Date), mean)
 
 for(i in seq(2, K+1, 1)){
-    ggplot() + geom_line(aes(x=agg[,1], y=agg[,i])) + xlab("Date") + ylab("Topic Proportion")
-    ggsave(paste("time_plot", i-1, ".pdf", sep=""))
+    gplot <- ggplot() + geom_line(aes(x=agg[,1], y=agg[,i])) + xlab("Date") + ylab("Topic Proportion")
+    pdf(paste('../images/time_plot', i-1, '.pdf', sep=""), height=5.5, width=6.5, family='CM Roman')
+    print(gplot)
+    dev.off()
 }
 
