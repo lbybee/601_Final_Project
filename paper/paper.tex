@@ -234,9 +234,13 @@ Using our resulting topic model we want to answer a series of questions concerni
 
 \subsection{Interpreting Topics}
 
-MERGE HERE
+To answer the first question above, we have to turn to human intuition.  While the original problem was too massive for a human to take on, the LDA algorithm has produced the prescribed number of topics with the most common words for each topic.  This looks like:
 
-ALSO TOPIC TABLE
+The algorithm of course makes no attempt to interpret the meaning of this, as it simply looks for the words that generally appear together and lumps them into the specified number of topics.  At this point, we literally have to look through each topic and attempt to identify it.  For example, topic 6 seems to be about Israel with key words like ``israel'', ``palestinian'', and ``netanyahu'', while topic 8 seems to have a lot of common words like ``think'', ``like'', and ``good''.
+
+After this, we have our overall topic table.
+
+TOPIC TABLE HERE
 
 At first, it may seem alarming that there are common and weak topics, but it's actually a good thing in many ways.  First, it's remarkable and incredibly useful from an analysis standpoint, that LDA accurately separates the common words into their own topics.  Clearly, words like ``think'', ``like'', and ``good'' are going to be present in any collection of documents, and they're not common enough like ``a'', ``and'', ``the'' to just eliminate from the data.  This means LDA is capable of separating out common words into their own topics so they can be incorporated or ignored as seen fit.  This is a huge advantage of this method.
 
