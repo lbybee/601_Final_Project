@@ -226,15 +226,19 @@ In general, it seems that spectral clustering does a good job at identifying ema
 
 \section{Topic Modeling}
 
-To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA).  LDA is a popular form of topic modeling that has historically been effective for identifying clusters or "topics" in text corpuses\footnote{note on estimation}.  
+To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA). LDA is a popular form of topic modeling that has historically been effective for identifying clusters or ``topics'' in text corpuses.\footnote{note on estimation}
 
-LDA requires the number of topics to be specified as an input to the model, therefore one of the preliminary steps for topic model estimation is the selection of an appropriate number of topics.  Since our ultimate goal was to find sensible topics that could be used to understand the email corpus we initially turned to several coherence measures to perform our model selection, in particular we considered the UMass and UCI measures\footnote{add bib here}.  Coherence measures were developed as a way to quantify whether topics could make sense to a human observer.  However, the coherence of our topics didn't appear to vary much assuming we used more than 15 topics and less than 50.  As a result we turned to manual methods for selecting the number of topics that appeared to perform the best.  We estimated LDA for 5,10,...,75 topics and selected the model that appeared to be the most sensible to a human observer.  This left us with a 30 topic model.
+LDA requires the number of topics to be specified as an input to the model, therefore one of the preliminary steps for topic model estimation is the selection of an appropriate number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to several coherence measures to perform our model selection. In particular, we considered the UMass and UCI measures.\footnote{add bib here} Coherence measures allow us to quantify whether estimated topics make sense to a human observer. However, the coherence of our topics did not appear to vary much across a wide range of reasonable topic numbers, from roughly 15 to 50 topics used. As a result we manually examined the results from models using a range of topics and attempted to select the most parsimonious model, resulting in a 30 topic model.
 
-Using our resulting topic model we want to answer a series of questions concerning our resulting topics and the email corpus.  First, can we identify a sensible structure in our topics that captures the structure we see with spectral clustering?  Second, can we identify informative content topics that correspond to real world events?  Finally, can we say anything about the email senders based on the topics discussed?
+% After estimating our final topic model we want to answer a series of questions concerning our resulting topics and the email corpus.  First, can we identify a sensible structure in our topics that captures the structure we see with spectral clustering?  Second, can we identify informative content topics that correspond to real world events?  Finally, can we say anything about the email senders based on the topics discussed?
 
 \subsection{Interpreting Topics}
 
-To answer the first question above, we have to turn to human intuition.  While the original problem was too massive for a human to take on, the LDA algorithm has produced the prescribed number of topics with the most common words for each topic.  This looks like:
+After choosing and estimating our topic model, the first task is to check whether we can actually find meaning in the resulting topics. If topics correspond to meaningful issues or structures then we can use these results to make useful observations about the data.
+
+This ability to then perform ``human'' analysis on the results is one of the key features of LDA. Bringing human intuition to bear on a 28,000 email corpus is nearly impossible, but by condensing the data into a handful of topics LDA has allowed us to leverage our human understanding of semantics and meaning to analyze the data.
+
+Analysis is most easily done by examining the top words from each topics to find patterns and themes. Table~XX shows the top 10 words for each of the 30 estimated topics.
 
 The algorithm of course makes no attempt to interpret the meaning of this, as it simply looks for the words that generally appear together and lumps them into the specified number of topics.  At this point, we literally have to look through each topic and attempt to identify it.  For example, topic 6 seems to be about Israel with key words like ``israel'', ``palestinian'', and ``netanyahu'', while topic 8 seems to have a lot of common words like ``think'', ``like'', and ``good''.
 
@@ -244,7 +248,7 @@ TOPIC TABLE HERE
 
 At first, it may seem alarming that there are common and weak topics, but it's actually a good thing in many ways.  First, it's remarkable and incredibly useful from an analysis standpoint, that LDA accurately separates the common words into their own topics.  Clearly, words like ``think'', ``like'', and ``good'' are going to be present in any collection of documents, and they're not common enough like ``a'', ``and'', ``the'' to just eliminate from the data.  This means LDA is capable of separating out common words into their own topics so they can be incorporated or ignored as seen fit.  This is a huge advantage of this method.
 
-As for the weak topics, not every topic has many, many words associated with it, so it's natural for some topics to have less words associated necessitating the algorithm to fill them in with other words.  For example, both terrorism topics are in the weak category.   Domestic terror at first glance could be a common category, but there are words below that seen such as ``death'', ``student'', ``group'', and ``hospit'' among others that help identify as Domestic Terror.  Topics such as this can come about as a common-sense thought that ``Domestic Terror'' should be a topic among Hillary Clinton's emails and this was the strongest of the weaker topics to fit this idea.  Is this right, or correct to label a topic in this manner?  There is no right or wrong in this sense when it comes down to it.  There is no statistical procedure that outlines the labeling of topics, so it is all done by eye.  
+As for the weak topics, not every topic has many, many words associated with it, so it's natural for some topics to have less words associated necessitating the algorithm to fill them in with other words.  For example, both terrorism topics are in the weak category.   Domestic terror at first glance could be a common category, but there are words below that seen such as ``death'', ``student'', ``group'', and ``hospit'' among others that help identify as Domestic Terror.  Topics such as this can come about as a common-sense thought that ``Domestic Terror'' should be a topic among Hillary Clinton's emails and this was the strongest of the weaker topics to fit this idea.  Is this right, or correct to label a topic in this manner?  There is no right or wrong in this sense when it comes down to it.  There is no statistical procedure that outlines the labeling of topics, so it is all done by eye.
 
 After the initial run-through to label each topic, more summary can be done to further categorize the various topics.  Looking through, we can place the topics together, see table \ref{tab:topic_cat} for these groups.
 
@@ -276,7 +280,7 @@ A few things jump out.  First, every topic is at least 1\% in each email (at lea
 
 Before analyzing, we will remove the percentages for the common topics for each email, since we can realistically say that no email is about a topic with ``can'', ``also'', ``will'', etc., as the key words.  Next, we will zero any topic for each email that has less than 5\%.  The reason for this is the same as the logic in the above paragraph.  For email 2, we would naturally seek the topics with the higher percentages and ignore the rest.  After this we will rescale the percentages.
 
-First, we can look at the number of emails that had each of the 26 non-common topics as the primary topic, or the topic with the highest percentage associated with it.  
+First, we can look at the number of emails that had each of the 26 non-common topics as the primary topic, or the topic with the highest percentage associated with it.
 
 \begin{table}[htb] \centering
 \setlength{\tabcolsep}{1pt}
@@ -319,7 +323,7 @@ First, we can look at the number of emails that had each of the 26 non-common to
 \label{tab:topic_freq}
 \end{table}
 
-As we can see, the color-coding catches the eye, and the first unmistakable observation we can make is that Hillary Clinton and her staff talk a lot about meetings.  This is probably not too surprising for someone in her level of the US government.  As a high level official like Secretary of State, much of her day is probably spent in some sort of meeting or briefing getting filled in by her subordinates. 
+As we can see, the color-coding catches the eye, and the first unmistakable observation we can make is that Hillary Clinton and her staff talk a lot about meetings.  This is probably not too surprising for someone in her level of the US government.  As a high level official like Secretary of State, much of her day is probably spent in some sort of meeting or briefing getting filled in by her subordinates.
 
 Another quick observation that we can make is that there is a stark absence of domestic politics type issues such as abortion, health care, domestic economy, and others.  This, also, is not too surprising, as Hillary Clinton was Secretary of State, a position that mainly consists of foreign affairs.
 
@@ -331,38 +335,35 @@ Talk about structural, common word, and semantic topics, including ``interesting
 
 \subsection{Topic Analysis}
 
-We next want to get a sense of what the content topics look like and whether they correspond to real world events.  See table \ref{tab:content_topics}, for the top 10 words for a subset of six topics that we consider content topics.  These topics correspond to real world politically significant events.  For instances the Libya topic captures information about the Benghazi scandal as well the collapse of Gaddafi's administration.  
+We next want to get a sense of what the content topics look like and whether they correspond to real world events.  See table \ref{tab:content_topics}, for the top 10 words for a subset of six topics that we consider content topics.  These topics correspond to real world politically significant events.  For instances the Libya topic captures information about the Benghazi scandal as well the collapse of Gaddafi's administration.
 
-\begin{table}[h]
-\centering
-\scalebox{0.8}{
+\begin{table}[h] \centering
 \begin{tabular}{cccccc}
-\toprule
-Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
-\midrule
-israel & democrat & libya & afghanistan & develop & presid \\
-isra & republican & secur & pakistan & state & obama \\
-peace & american & travel & afghan & support & said \\
-palestinian & polit & libyan & militari & global & hous \\
-netanyahu & parti & iraq & general & program & white \\
-east & elect & embassi & karzai & effort & administr \\
-negoti & obama & attack & offici & intern & polici \\
-arab & percent & kill & war & work & aid \\
-state & candid & march & forc & includ & advis \\
-\bottomrule
+  \toprule
+  Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
+  \midrule
+  israel & democrat & libya & afghanistan & develop & presid \\
+  isra & republican & secur & pakistan & state & obama \\
+  peace & american & travel & afghan & support & said \\
+  palestinian & polit & libyan & militari & global & hous \\
+  netanyahu & parti & iraq & general & program & white \\
+  east & elect & embassi & karzai & effort & administr \\
+  negoti & obama & attack & offici & intern & polici \\
+  arab & percent & kill & war & work & aid \\
+  state & candid & march & forc & includ & advis \\
+  \bottomrule
 \end{tabular}
-}
 \caption{Some interesting content topics}
 \label{tab:content_topics}
 \end{table}
 
 Looking at the table we can see that the model does a good job of identifying words that we as human observers would associate with these events.  The election topic picks up on both of the primary political parties in the United States as well as words associated with political parties and elections, eg. polit(ics), parti(y), elect(ion), percent, candid(ate).  Similarly, the international development topics identifies words that we would associate with international development, eg. develop, support, global.  While this is only a subset of the content topics, we find that all of our content topics have this pattern.
 
-While our content topics do appear to be sensible, we also want to get a sense of whether our topics appear in correct location in time.  For email we have a time stamp so we can sort our topic proportions by time to get a sense of whether our topics line up with real world events that correspond to the human interpretation of our topics.  See figure \ref{fig:topic_time_plots} for a plot of the mean monthly topic proportion fo the subset of content topics discussed above.  
+While our content topics do appear to be sensible, we also want to get a sense of whether our topics appear in correct location in time.  For email we have a time stamp so we can sort our topic proportions by time to get a sense of whether our topics line up with real world events that correspond to the human interpretation of our topics.  See Figure~\ref{fig:topic_time_plots} for a plot of the mean monthly topic proportion fo the subset of content topics discussed above.
 
-Comparing our topic proportion plots to real world news events, we can see that our topics do a good job of picking up on the correct events.  In the Isreal topic the first peak of the topic proportions corresponds to the July 26th, 2010 joint Israeli and Romanian helicopter disaster, while the second peak corresponds to the September 9th, 2011 attack on the Israel embassy in Egypt.  Similarly, for the election topic each of the peaks corresponds to an election in the US.  Finally, the first peak of the Libya topic corresponds to the fall of Gaddafi's adminstration in October of 2011, while the second peak corresponds to the Benghazi attack on September 11th, 2012.  Again, while this shows only a subset of the topics we find that this pattern persists throughout our content topics\footnote{Comparable topic proportion plots are available on the github page for this project.}.
+Comparing our topic proportion plots to real world news events, we can see that our topics do a good job of picking up on the correct events.  In the Isreal topic the first peak of the topic proportions corresponds to the July 26th, 2010 joint Israeli and Romanian helicopter disaster, while the second peak corresponds to the September 9th, 2011 attack on the Israel embassy in Egypt.  Similarly, for the election topic each of the peaks corresponds to an election in the US.  Finally, the first peak of the Libya topic corresponds to the fall of Gaddafi's adminstration in October of 2011, while the second peak corresponds to the Benghazi attack on September 11th, 2012.  Again, while this shows only a subset of the topics we find that this pattern persists throughout our content topics.\footnote{Comparable topic proportion plots are available on the github page for this project.}
 
-\begin{figure}[h]
+\begin{figure}[htb]
 \centering
 \begin{subfigure}[Israel]{.30\linewidth}
     \includegraphics[width=\linewidth]{../images/time_plot6.pdf}
@@ -397,31 +398,27 @@ Comparing our topic proportion plots to real world news events, we can see that 
 
 Finally, we want to consider whether we can say anything interesting about the senders based on our topic model.  In total 395 unique senders exist in our email corpus, however, only 14 senders sent more than 100 emails.  We focus on this subset of 14 senders for the remainder of our analysis.  This leaves us with a corpus of 25809 emails.  We use the topic proportions from the model estimated on the full corpus for this subset.
 
-\begin{table}[h]
-\centering
-\label{topic_sources}
-\scalebox{0.70}{
+\begin{table}[htb] \centering \scriptsize
 \begin{tabular}{cccccc}
-\toprule
-Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
-\midrule
-Sidney Blumenthal & SB & Huma Abedin & Judith McHale & JM & SB \\
-(SB) & & (HA) & (JM) & & \\
-\noalign{\vskip 5mm}
-HA & Philippe Reines & Wendy Sherman & HA & Melanne Verveer & PR \\
-& (PR) & (WS) & & (MV) & \\
-\noalign{\vskip 5mm}
-Jake Sullivan & JM & JS & MV & Anne-Marie & Cherly Mills \\
-(JS) & & & & Slaughter (AMS) & (CM)\\
-\noalign{\vskip 5mm}
-AMS & CM & Monica Hanley & JS & CM & HA \\
-& & (MH) & & & \\
-\noalign{\vskip 5mm}
-Hillary Clinton & HA & SB & Richard Verma & JS & HC \\
-(HC) & & & (RV) & & \\
-\bottomrule
+  \toprule
+  Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
+  \midrule
+  Sidney Blumenthal & SB & Huma Abedin & Judith McHale & JM & SB \\
+  (SB) & & (HA) & (JM) & & \\
+  \noalign{\vskip 5mm}
+  HA & Philippe Reines & Wendy Sherman & HA & Melanne Verveer & PR \\
+  & (PR) & (WS) & & (MV) & \\
+  \noalign{\vskip 5mm}
+  Jake Sullivan & JM & JS & MV & Anne-Marie & Cherly Mills \\
+  (JS) & & & & Slaughter (AMS) & (CM)\\
+  \noalign{\vskip 5mm}
+  AMS & CM & Monica Hanley & JS & CM & HA \\
+  & & (MH) & & & \\
+  \noalign{\vskip 5mm}
+  Hillary Clinton & HA & SB & Richard Verma & JS & HC \\
+  (HC) & & & (RV) & & \\
+  \bottomrule
 \end{tabular}
-}
 \caption{Primary senders for interesting topics}
 \label{tab:top_senders}
 \end{table}
@@ -434,37 +431,34 @@ While the above results do give some sense of which senders are most associated 
 
 For our particular case we estimate a model using the $30$ topics as our explanatory variables and the $14$ senders as our labels.  We use a training subset of 23229 emails and their corresponding topic proportions to train our model and a subset of 2580 emails for testing.  See table \ref{tab:mlr_success} for the success rate for our testing data.  Overall the model appears to perform well, correctly identifying roughly 30\% of the senders correctly.  For Hillary we correctly identify 74\% of the emails.
 
-\begin{table}[h]
-\centering
-%\scalebox{0.7}{
+\begin{table}[htb] \centering
 \begin{tabular}{ccc}
-\toprule
-Source & Success Rate & Testing Observations \\
-\midrule
-Hillary Clinton & 0.74 & 849 \\
-Philippe Reines & 0.06 & 34 \\
-Claire Coleman & 0.52 & 27 \\
-Lauren Jiloty & 0.42 & 71 \\
-Huma Abedin & 0.36 & 376 \\
-Jake Sullivan & 0.23 & 410 \\
-Sidney Blumenthal & 0.29 & 87 \\
-Cherly Mills & 0.31 & 491 \\
-Anne-Marie Slaughter & 0.36 & 42 \\
-Monica Hanley & 0.09 & 53 \\
-Judith McHale & 0.25 & 28 \\
-Robert Russo & 0.00 & 10 \\
-Richard Verma & 0.26 & 19 \\
-Wendy Sherman & 0.08 & 12 \\
-Melanne Verveer & 0.30 & 30 \\
-Lona Valmoro & 0.34 & 41 \\
-\bottomrule
+  \toprule
+  Source & Success Rate & Testing Observations \\
+  \midrule
+  Hillary Clinton & 0.74 & 849 \\
+  Philippe Reines & 0.06 & 34 \\
+  Claire Coleman & 0.52 & 27 \\
+  Lauren Jiloty & 0.42 & 71 \\
+  Huma Abedin & 0.36 & 376 \\
+  Jake Sullivan & 0.23 & 410 \\
+  Sidney Blumenthal & 0.29 & 87 \\
+  Cherly Mills & 0.31 & 491 \\
+  Anne-Marie Slaughter & 0.36 & 42 \\
+  Monica Hanley & 0.09 & 53 \\
+  Judith McHale & 0.25 & 28 \\
+  Robert Russo & 0.00 & 10 \\
+  Richard Verma & 0.26 & 19 \\
+  Wendy Sherman & 0.08 & 12 \\
+  Melanne Verveer & 0.30 & 30 \\
+  Lona Valmoro & 0.34 & 41 \\
+  \bottomrule
 \end{tabular}
-%}
 \caption{Multinomial logistic regression successes}
 \label{tab:mlr_success}
 \end{table}
 
-To relate these results back to our earlier analysis we want to look at the coefficients for the multinomial logistic regression model as this should give us a sense of how strongly each sender is associated with the different topics.  See figure \ref{fig:coefficients} for a heatmap of the resulting coefficient matrix\footnote{Note that the coefficients are standardized and we threshold all standardized coefficients above or below 2 to make the heatmap easier to interpret.}.
+To relate these results back to our earlier analysis we want to look at the coefficients for the multinomial logistic regression model as this should give us a sense of how strongly each sender is associated with the different topics.  See Figure~\ref{fig:coefficients} for a heatmap of the resulting coefficient matrix.\footnote{Note that the coefficients are standardized and then thresholded at $\pm2$ for illustrative purposes.}
 
 The results we see here all us to tell a story about the email senders that corresponds to our intution based on each of the sender's backgrounds.  Sidney Blumenthal is strongly associated with the Middle East, foreign policy and general politics topics.  He doesn't have much to say about Hillary or her significance to the press and generally doesn't talk muhc about meetings.  Huma Abedin and Jake Sullivan provide advice on the Middle east and foreign policy.  Judith McHale focuses her emails on foreign policy and handling press issues.  While all this is going on Hillary spends most of her time discussing meetings.
 
