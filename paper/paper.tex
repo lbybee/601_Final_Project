@@ -149,11 +149,11 @@
 
 \begin{document}
 
-\title{Exploring Hillary Clinton's Emails\thanks{STATS 601 final project.}}
+\title{Exploring Hillary Clinton's Emails\thanks{STATS 601 final project. All of the code used to download, process, and analyze the data for this project is available at \url{https://github.com/lbybee/601_Final_Project} and has been open-sourced under the MIT license.}}
 \author{
     Leland Bybee, Roger Fan, Ryan Vaughn
 }
-\date{\today}
+\date{April 22, 2016}
 
 \maketitle
 
@@ -231,13 +231,13 @@ The primary parameter that we need to specify for LDA is the number of topics. S
 
 % After estimating our final topic model we want to answer a series of questions concerning our resulting topics and the email corpus.  First, can we identify a sensible structure in our topics that captures the structure we see with spectral clustering?  Second, can we identify informative content topics that correspond to real world events?  Finally, can we say anything about the email senders based on the topics discussed?
 
-\subsection{Interpreting Topics}
 
+\subsection{Interpreting Topics}
 After choosing and estimating our topic model, the first task is to check whether we can actually find meaning in the resulting topics. If topics correspond to meaningful issues or structures then we can use these results to make useful observations about the data.
 
 This ability to then perform ``human'' analysis on the results is one of the key features of LDA. Bringing human intuition to bear on a 28,000 email corpus is nearly impossible, but by condensing the data into a handful of topics LDA has allowed us to leverage our human understanding of semantics and meaning to analyze the data.
 
-Analysis is most easily done by examining the top words from each topics to find patterns and themes. Table~\ref{tab:top_words} shows the top 10 words for each of the 30 estimated topics. The LDA algorithm makes no attempt to interpret these meanings, but by viewing them there are several easily distinguishable patterns. For example, many of the top words in Topic~6 relate to Israel and Palestine. Not every topic is as well-identified as this, and some of the estimated topics are thematically weaker than others, but overall the topics seems to correspond very well to interpretable subjects.
+Interpretation is most easily done by examining the top words from each topics to find patterns and themes. Table~\ref{tab:top_words} shows the top 10 words for each of the 30 estimated topics. The LDA algorithm makes no attempt to interpret these meanings, but by viewing them there are several easily distinguishable patterns. For example, many of the top words in Topic~6 relate to Israel and Palestine. Not every topic is as well-identified as this, and some of the estimated topics are thematically weaker than others, but overall the topics seems to correspond very well to interpretable subjects.
 
 \begin{table}[htb] \centering \scriptsize
 \include{top_words_table}
@@ -353,7 +353,7 @@ We can also look into specific topics in more detail to see what they consist of
 \label{tab:content_topics}
 \end{table}
 
-We can see that the model effectively identifies words human observers would associate with these events. Topic~11 picks up on both of the primary political parties in the United States as well as other words associated with elections, such as politics, percent, and candidate.  Similarly, the Topic~23 identifies words that associated with international development, including develop, support, and global.
+The model seems to effectively identify words that human observers would associate with these events. Topic~11 picks up on both of the primary political parties in the United States as well as other words associated with elections, such as politics, percent, and candidate.  Similarly, the Topic~23 identifies words that associated with international development, including develop, support, and global.
 
 Given that we have time stamps foe each email, we can also examine how these topics are used over time. Figure~\ref{fig:topic_time_plots} plots the mean monthly topic proportion for each of the topics in Table~\ref{tab:content_topics}.
 
@@ -420,8 +420,8 @@ Finally, we want to consider whether we can say anything interesting about the s
 
 See Table~\ref{tab:top_senders} for a ranking of the 14 senders for the subset of content topics explored above.  This table presents the top five senders for each of the topics based on the average topic proportion for each sender.  The sorting that we get back seems to fit with a human understanding of each of the senders, Sidney Blumenthal, who appears to be most associated with the Israel, Election and Obama topics is a long standing advisor to the Clinton family who has written extensively on US politics as well as foreign policy.  Similarly, Huma Abedin, who is most associated with Libya was a key figure during the Benghazi hearings and was generally strongly associated with foreign policy, particularlly in the Middle East while Hillary Clinton's Deputy Chief of Staff.  Finally, Judith McHale, who is most associated with the Afghanistan and international development topic was Under Secretary of State for Public Diplomacy and Public Affairs during the early portion of the email corpus under Hillary.  She also has been strongly associated with a number of philanthropic efforts.  It may be interesting to note that Hillary does not appear to be strongly associated with many of our subset of content topics.  This pattern persists through the remainder of the content topics, in general, Hillary does not appear to send many emails strongly associated with most of the content topics.
 
-\subsection{Multinomial Logistic Regression}
 
+\subsection{Multinomial Logistic Regression}
 While the above results do give some sense of which senders are most associated with which topics, we next want to formalize this approach and get more general results that can more easily show us which senders are most related to each topic.  To approach this problem we turn to multinomial logistic regression as a solution.  Multinomial logistic regression generalizes the logistic regression approach to the case with more labels than two.  Part of the output of multinomial logistic regression is a $P \times K$ matrix of coefficients corresponding to how strongly related each of the $K$ variables of interest are related to each of the $P$ labels.
 
 For our particular case we estimate a model using the $30$ topics as our explanatory variables and the $14$ senders as our labels.  We use a training subset of 23229 emails and their corresponding topic proportions to train our model and a subset of 2580 emails for testing.  See table \ref{tab:mlr_success} for the success rate for our testing data.  Overall the model appears to perform well, correctly identifying roughly 30\% of the senders correctly.  For Hillary we correctly identify 74\% of the emails.
@@ -467,7 +467,6 @@ In general the story that emerges is that while Hillary does not say much hersel
 
 
 \section{Conclusion}
-
 We have presented a series of results to attempt to make a large corpus of emails that would be difficult to parse manually approachable to the human user.  We have been able to identify general structures in the email corpus using both spectral clustering and LDA.  For LDA we find that we can seperate out content topics from structural topics and that the topics we get back are sensible and align with what we would expect in the real world.  Additionally, we find that we can say something interesting about the senders for our email corpus.
 
 There are many ways that this work could be expanded, and our work should be considered explorartory and a starting place more than anything else.  While we begin to dive into some possible extensions when we discuss senders this idea could easily be taken further.  Information on recievers, while not as clean as sender information could also be incorporated.  This could allows us to build a better model of interactions within the email corpus.  Additionally, variables beyond just the topic proportions could be incorporated into our model, one clear example of this is a time spline variable to account for the possibility that different senders are more important for different topics over time.
