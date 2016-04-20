@@ -206,7 +206,7 @@ Using this measure of distance, we can construct a distance matrix $D$ and apply
 \end{figure}
 
 
-\subsection{Spectral Clustering}
+\subsection{Spectral Clustering} \label{sec:spec_cluster}
 In order to better identify structure that may exist in the data, we attempt to apply clustering methods. However, it is important to choose an appropriate clustering method due to the high dimensionality and sparse nature of the data. In particular, we expect centroid-based methods such as Gaussian mixture models and $k$-means clustering to perform poorly in this setting.
 
 Spectral clustering, however, exploits the information contained in the pairwise distances (or, equivalently, the similarities) between points. By using pairwise distances, spectral clustering is particularly well-suited to finding clusters that may not necessarily be spherical or ellipsoidal and that may lie along lower-dimensional manifolds.
@@ -219,16 +219,15 @@ Then the eigenvectors corresponding to the smallest $k$ eigenvalues of $L$ are c
 
 Figure~\ref{fig:cluster} classifies each point according to the results of spectral clustering with $k$ clusters. We can see that many of the cluster correspond to  the visually identifiable structures, including clusters that correspond to each of the ``arms.''
 
-By investigating the individual emails, we can also get a sense of what each cluster consists of. For instance, clusters 2 and 4 consist of emails related to calls and communication. In this arm, those closer to the main central clump contain more conversation, while those farther out are much briefer and directly about the call (e.g. ``I'd like to call tomorrow.''). Cluster 3 consists entirely of ``minis,'' summaries of the days schedule sent to Clinton each morning. Emails from cluster 5 are generally requests to print materials, while those from cluster 6 are forwarded news articles.
+By investigating the individual emails, we can also get a sense of what each cluster consists of. For instance, Clusters~2 and~4 consist of emails related to calls and communication. In this arm, those closer to the main central clump contain more conversation, while those farther out are much briefer and directly about the call (e.g. ``I'd like to call tomorrow.''). Cluster~3 consists entirely of ``minis,'' summaries of the days schedule sent to Clinton each morning. Emails from Cluster~5 are generally requests to print materials, while those from Cluster~6 are forwarded news articles.
 
-In general, it seems that spectral clustering does a good job at identifying emails by their structure, but does not tell us much about the meaning of an email. We can tell that an email is regarding a call or is a news headline by what cluster it is in, but not what that call or headline is about. On a related note, it does not do a good job separating the ``regular'' emails. OVer 5,000 of the 8,000 emails depicted fall into clusters 1 or 8, which essentially consist of all the emails without specific identifiable structure. Ideally we would be able to further classify these emails according to subject matter, but clustering does not seem suited to this task.
+In general, it seems that spectral clustering does a good job at identifying emails by their structure, but does not tell us much about the meaning of an email. We can tell that an email is regarding a call or is a news headline by what cluster it is in, but not what that call or headline is about. On a related note, it does not do a good job separating the ``regular'' emails. Over 5,000 of the 8,000 emails depicted fall into Clusters~1 or~8, which essentially consist of all the emails without specific identifiable structure. Ideally we would be able to further classify these emails according to subject matter, but clustering does not seem suited to this task.
 
 
 \section{Topic Modeling}
+To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA). LDA is a popular form of topic modeling that has historically been effective for identifying meaningful ``topics'' in text corpuses.\footnote{note on estimation}
 
-To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA). LDA is a popular form of topic modeling that has historically been effective for identifying clusters or ``topics'' in text corpuses.\footnote{note on estimation}
-
-LDA requires the number of topics to be specified as an input to the model, therefore one of the preliminary steps for topic model estimation is the selection of an appropriate number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to several coherence measures to perform our model selection. In particular, we considered the UMass and UCI measures.\footnote{add bib here} Coherence measures allow us to quantify whether estimated topics make sense to a human observer. However, the coherence of our topics did not appear to vary much across a wide range of reasonable topic numbers, from roughly 15 to 50 topics used. As a result we manually examined the results from models using a range of topics and attempted to select the most parsimonious model, resulting in a 30 topic model.
+The primary parameter that we need to specify for LDA is the number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to coherence measures, which attempt to quantify whether estimated topics would make sense to a human observer. In particular, we considered the UMass and UCI measures.\footnote{add bib here} However, the coherence of our topics did not appear to vary much across a wide range of reasonable topic numbers, from roughly 15 to 50 topics used. As a result we manually examined the results from models using a range of topics and attempted to select the most parsimonious model, resulting in a 30 topic model.
 
 % After estimating our final topic model we want to answer a series of questions concerning our resulting topics and the email corpus.  First, can we identify a sensible structure in our topics that captures the structure we see with spectral clustering?  Second, can we identify informative content topics that correspond to real world events?  Finally, can we say anything about the email senders based on the topics discussed?
 
@@ -238,11 +237,7 @@ After choosing and estimating our topic model, the first task is to check whethe
 
 This ability to then perform ``human'' analysis on the results is one of the key features of LDA. Bringing human intuition to bear on a 28,000 email corpus is nearly impossible, but by condensing the data into a handful of topics LDA has allowed us to leverage our human understanding of semantics and meaning to analyze the data.
 
-Analysis is most easily done by examining the top words from each topics to find patterns and themes. Table~XX shows the top 10 words for each of the 30 estimated topics.
-
-The algorithm of course makes no attempt to interpret the meaning of this, as it simply looks for the words that generally appear together and lumps them into the specified number of topics.  At this point, we literally have to look through each topic and attempt to identify it.  For example, topic 6 seems to be about Israel with key words like ``israel'', ``palestinian'', and ``netanyahu'', while topic 8 seems to have a lot of common words like ``think'', ``like'', and ``good''.
-
-After this, we have our overall topic table.
+Analysis is most easily done by examining the top words from each topics to find patterns and themes. Table~\ref{tab:top_words} shows the top 10 words for each of the 30 estimated topics. The LDA algorithm makes no attempt to interpret these meanings, but by viewing them there are several easily distinguishable patterns. For example, many of the top words in Topic~6 relate to Israel and Palestine. Not every topic is as well-identified as this, and some of the estimated topics are thematically weaker than others, but overall the topics seems to correspond very well to interpretable subjects.
 
 \begin{table}[htb] \centering \scriptsize
 \include{top_words_table}
@@ -250,11 +245,11 @@ After this, we have our overall topic table.
 \label{tab:top_words}
 \end{table}
 
-At first, it may seem alarming that there are common and weak topics, but it's actually a good thing in many ways.  First, it's remarkable and incredibly useful from an analysis standpoint, that LDA accurately separates the common words into their own topics.  Clearly, words like ``think'', ``like'', and ``good'' are going to be present in any collection of documents, and they're not common enough like ``a'', ``and'', ``the'' to just eliminate from the data.  This means LDA is capable of separating out common words into their own topics so they can be incorporated or ignored as seen fit.  This is a huge advantage of this method.
+Another useful example is Topic~8, which does not seem to have any semantically meaningful words but primarily consists of ``common'' words like think, good, and tell. These ``structural'' topics illustrate one of the key advantages of the LDA model over spectral clustering. As we discussed in Section~\ref{sec:spec_cluster}, spectral clustering is only able to identify clusters based on the structure of emails, not their meaning. This is presumably because it primarily relies on the distribution of these ``common'' or ``structural'' words. By separating these types of words into separate topics, LDA is therefore able to better identify meaning in emails independent of their structure.
 
-As for the weak topics, not every topic has many, many words associated with it, so it's natural for some topics to have less words associated necessitating the algorithm to fill them in with other words.  For example, both terrorism topics are in the weak category.   Domestic terror at first glance could be a common category, but there are words below that seen such as ``death'', ``student'', ``group'', and ``hospit'' among others that help identify as Domestic Terror.  Topics such as this can come about as a common-sense thought that ``Domestic Terror'' should be a topic among Hillary Clinton's emails and this was the strongest of the weaker topics to fit this idea.  Is this right, or correct to label a topic in this manner?  There is no right or wrong in this sense when it comes down to it.  There is no statistical procedure that outlines the labeling of topics, so it is all done by eye.
 
-After the initial run-through to label each topic, more summary can be done to further categorize the various topics.  Looking through, we can place the topics together, see table \ref{tab:topic_cat} for these groups.
+\subsection{Topic Categorization}
+Looking through the word lists, we can roughly categorize the topics into overarching themes. This is obviously a subjective exercise, but is an example of how LDA can enable human, subjective analysis of the data. Table~\ref{tab:topic_cat} contains an example categorization.
 
 \begin{table}[htb] \centering
 \begin{tabular}{rcl}
@@ -274,48 +269,48 @@ After the initial run-through to label each topic, more summary can be done to f
 \label{tab:topic_cat}
 \end{table}
 
-The second thing that LDA gives is, for each email, a probability for every topic that the topic is included in the email.  Here, we will look at the relationships between topics and the frequencies that the topics are discussed.
+% The second thing that LDA gives is, for each email, a probability for every topic that the topic is included in the email.  Here, we will look at the relationships between topics and the frequencies that the topics are discussed.
 
-If we look at the entire data set, LDA will not give any topics probabilities of zero for any email, even if that topic realistically doesn't come up at all.  For example, here are the first six emails in the data set with the probabilities (in percent here) that each of the 30 topics is discussed in the email.
+% If we look at the entire data set, LDA will not give any topics probabilities of zero for any email, even if that topic realistically doesn't come up at all.  For example, here are the first six emails in the data set with the probabilities (in percent here) that each of the 30 topics is discussed in the email.
 
-PROBABILITY TABLE
+% PROBABILITY TABLE
 
-A few things jump out.  First, every topic is at least 1\% in each email (at least apparently in this grouping, but it's this way throughout the entire set).  Second, some emails aren't about very much at all.  Email 1 has 3\% for everything and 9\% for topic 3, which was a common topic.  Contrast this with email 2, which has a low \% for every topic except 18, 19, 21, 25.  We could hypothesize that this email is about the Middle East, Foreign Policy, and Domestic Politics.  We could, of course, do this kind of procedure with email after email, but with 28,000 emails we need a way to get meaning from the whole group.
+% A few things jump out.  First, every topic is at least 1\% in each email (at least apparently in this grouping, but it's this way throughout the entire set).  Second, some emails aren't about very much at all.  Email 1 has 3\% for everything and 9\% for topic 3, which was a common topic.  Contrast this with email 2, which has a low \% for every topic except 18, 19, 21, 25.  We could hypothesize that this email is about the Middle East, Foreign Policy, and Domestic Politics.  We could, of course, do this kind of procedure with email after email, but with 28,000 emails we need a way to get meaning from the whole group.
 
-Before analyzing, we will remove the percentages for the common topics for each email, since we can realistically say that no email is about a topic with ``can'', ``also'', ``will'', etc., as the key words.  Next, we will zero any topic for each email that has less than 5\%.  The reason for this is the same as the logic in the above paragraph.  For email 2, we would naturally seek the topics with the higher percentages and ignore the rest.  After this we will rescale the percentages.
+% Before analyzing, we will remove the percentages for the common topics for each email, since we can realistically say that no email is about a topic with ``can'', ``also'', ``will'', etc., as the key words.  Next, we will zero any topic for each email that has less than 5\%.  The reason for this is the same as the logic in the above paragraph.  For email 2, we would naturally seek the topics with the higher percentages and ignore the rest.  After this we will rescale the percentages.
 
-First, we can look at the number of emails that had each of the 26 non-common topics as the primary topic, or the topic with the highest percentage associated with it.
+In the LDA model, a document is a probability distribution over the available topics. We also estimate these topic proportions for each email. To get an idea of the most common topics, we identify the ``primary'' topic in each email.\footnote{To identify primary topics, we ignore ``common'' topics as identified in Table~\ref{tab:topic_cat}. Then for each email we identify the highest percentage topic as the ``primary'' topic.} Table~\ref{tab:topic_freq} ranks the topics in terms of how frequently they are the primary topic.
 
 \begin{table}[htb] \centering
 \setlength{\tabcolsep}{1pt}
 \begin{tabular}{cccccccccccccccccccccccccc}
   \toprule
-  \colsquare[-3pt]{cforeign}{16pt} &
-  \colsquare[-3pt]{cmeet}{16pt} &
-  \colsquare[-3pt]{cmeet}{16pt} &
-  \colsquare[-3pt]{cmeet}{16pt} &
-  \colsquare[-3pt]{cmeet}{16pt} &
-  \colsquare[-3pt]{cmeet}{16pt} &
-  \colsquare[-3pt]{cpress}{16pt} &
-  \colsquare[-3pt]{cmeet}{16pt} &
-  \colsquare[-3pt]{cmideast}{16pt} &
-  \colsquare[-3pt]{cmideast}{16pt} &
-  \colsquare[-3pt]{cstaff}{16pt} &
-  \colsquare[-3pt]{chill}{16pt} &
-  \colsquare[-3pt]{cstaff}{16pt} &
-  \colsquare[-3pt]{cpolitics}{16pt} &
-  \colsquare[-3pt]{cforeign}{16pt} &
-  \colsquare[-3pt]{cmideast}{16pt} &
-  \colsquare[-3pt]{cforeign}{16pt} &
-  \colsquare[-3pt]{cmideast}{16pt} &
-  \colsquare[-3pt]{cterror}{16pt} &
-  \colsquare[-3pt]{cmideast}{16pt} &
-  \colsquare[-3pt]{cforeign}{16pt} &
-  \colsquare[-3pt]{cpolitics}{16pt} &
-  \colsquare[-3pt]{cforeign}{16pt} &
-  \colsquare[-3pt]{cforeign}{16pt} &
-  \colsquare[-3pt]{cpolitics}{16pt} &
-  \colsquare[-3pt]{cterror}{16pt} \\
+  \colsquare[-3pt]{cforeign}{15pt} &
+  \colsquare[-3pt]{cmeet}{15pt} &
+  \colsquare[-3pt]{cmeet}{15pt} &
+  \colsquare[-3pt]{cmeet}{15pt} &
+  \colsquare[-3pt]{cmeet}{15pt} &
+  \colsquare[-3pt]{cmeet}{15pt} &
+  \colsquare[-3pt]{cpress}{15pt} &
+  \colsquare[-3pt]{cmeet}{15pt} &
+  \colsquare[-3pt]{cmideast}{15pt} &
+  \colsquare[-3pt]{cmideast}{15pt} &
+  \colsquare[-3pt]{cstaff}{15pt} &
+  \colsquare[-3pt]{chill}{15pt} &
+  \colsquare[-3pt]{cstaff}{15pt} &
+  \colsquare[-3pt]{cpolitics}{15pt} &
+  \colsquare[-3pt]{cforeign}{15pt} &
+  \colsquare[-3pt]{cmideast}{15pt} &
+  \colsquare[-3pt]{cforeign}{15pt} &
+  \colsquare[-3pt]{cmideast}{15pt} &
+  \colsquare[-3pt]{cterror}{15pt} &
+  \colsquare[-3pt]{cmideast}{15pt} &
+  \colsquare[-3pt]{cforeign}{15pt} &
+  \colsquare[-3pt]{cpolitics}{15pt} &
+  \colsquare[-3pt]{cforeign}{15pt} &
+  \colsquare[-3pt]{cforeign}{15pt} &
+  \colsquare[-3pt]{cpolitics}{15pt} &
+  \colsquare[-3pt]{cterror}{15pt} \\
   21 & 1 & 28 & 30 & 10 & 9 & 4 & 24 & 18 & 29 & 16 & 12 & 20 &
   17 & 13 & 19 & 23 & 27 & 22 & 6 & 2 & 25 & 26 & 7 & 11 & 5 \\
   \midrule
@@ -327,23 +322,20 @@ First, we can look at the number of emails that had each of the 26 non-common to
 \label{tab:topic_freq}
 \end{table}
 
-As we can see, the color-coding catches the eye, and the first unmistakable observation we can make is that Hillary Clinton and her staff talk a lot about meetings.  This is probably not too surprising for someone in her level of the US government.  As a high level official like Secretary of State, much of her day is probably spent in some sort of meeting or briefing getting filled in by her subordinates.
+There are several interesting observations we can make from Tabels~\ref{tab:topic_cat} and~\ref{tab:topic_freq}. An easy one is that many of these emails are about meetings and similar issues. This not only makes sense because of Clinton's position as Secretary of State, where she presumably spends a large amount of time in meetings or briefings, but also because these shorter, administrative emails create high volume and are constantly being sent.
 
-Another quick observation that we can make is that there is a stark absence of domestic politics type issues such as abortion, health care, domestic economy, and others.  This, also, is not too surprising, as Hillary Clinton was Secretary of State, a position that mainly consists of foreign affairs.
+We can also observe that relatively few of the topics are about domestic issues such as health care, the economy, or education. Again, this matches what we would expect given that Clinton's position of Secretary of State means that she primarily deals with foreign affairs, which many of the topics are related to.
 
-Speaking of foreign affairs, the topic frequency for the purple above is much less than we might expect, except for 21.  This could be perceived as a bit unexpected from the Secretary of State.  This generalization might be unfair, however, because other specific foreign affair topics like 18 and 29 are higher and are about, for example, the Middle East.
-
-
-\subsection{Types of Topics}
-Talk about structural, common word, and semantic topics, including ``interesting'' vs. ``non-interesting'' topics, discuss strengths of model in comparison to MDS
+% Speaking of foreign affairs, the topic frequency for the purple above is much less than we might expect, except for 21.  This could be perceived as a bit unexpected from the Secretary of State.  This generalization might be unfair, however, because other specific foreign affair topics like 18 and 29 are higher and are about, for example, the Middle East.
 
 
 \subsection{Topic Analysis}
-We next want to get a sense of what the content topics look like and whether they correspond to real world events.  See table \ref{tab:content_topics}, for the top 10 words for a subset of six topics that we consider content topics.  These topics correspond to real world politically significant events.  For instances the Libya topic captures information about the Benghazi scandal as well the collapse of Gaddafi's administration.
+We can also look into specific topics in more detail to see what they consist of and how they might correspond to real-world events. Table~\ref{tab:content_topics} shows the top 10 words for six topics that are all examples of content topics. In particular, these topics correspond to specific politically significant events or issues. For instance, the Libya topic seems to capture discussion about the Benghazi scandal as well the collapse of Gaddafi's administration.
 
 \begin{table}[h] \centering
 \begin{tabular}{cccccc}
   \toprule
+  Topic 6 & Topic 11 & Topic 18 & Topic 27 & Topic 23 & Topic 25 \\
   Israel & Elections & Libya & Afghanistan & Int. Dev. & Obama \\
   \midrule
   israel & democrat & libya & afghanistan & develop & presid \\
@@ -361,11 +353,9 @@ We next want to get a sense of what the content topics look like and whether the
 \label{tab:content_topics}
 \end{table}
 
-Looking at the table we can see that the model does a good job of identifying words that we as human observers would associate with these events.  The election topic picks up on both of the primary political parties in the United States as well as words associated with political parties and elections, eg. polit(ics), parti(y), elect(ion), percent, candid(ate).  Similarly, the international development topics identifies words that we would associate with international development, eg. develop, support, global.  While this is only a subset of the content topics, we find that all of our content topics have this pattern.
+We can see that the model effectively identifies words human observers would associate with these events. Topic~11 picks up on both of the primary political parties in the United States as well as other words associated with elections, such as politics, percent, and candidate.  Similarly, the Topic~23 identifies words that associated with international development, including develop, support, and global.
 
-While our content topics do appear to be sensible, we also want to get a sense of whether our topics appear in correct location in time.  For email we have a time stamp so we can sort our topic proportions by time to get a sense of whether our topics line up with real world events that correspond to the human interpretation of our topics.  See Figure~\ref{fig:topic_time_plots} for a plot of the mean monthly topic proportion fo the subset of content topics discussed above.
-
-Comparing our topic proportion plots to real world news events, we can see that our topics do a good job of picking up on the correct events.  In the Isreal topic the first peak of the topic proportions corresponds to the July 26th, 2010 joint Israeli and Romanian helicopter disaster, while the second peak corresponds to the September 9th, 2011 attack on the Israel embassy in Egypt.  Similarly, for the election topic each of the peaks corresponds to an election in the US.  Finally, the first peak of the Libya topic corresponds to the fall of Gaddafi's adminstration in October of 2011, while the second peak corresponds to the Benghazi attack on September 11th, 2012.  Again, while this shows only a subset of the topics we find that this pattern persists throughout our content topics.\footnote{Comparable topic proportion plots are available on the github page for this project.}
+Given that we have time stamps foe each email, we can also examine how these topics are used over time. Figure~\ref{fig:topic_time_plots} plots the mean monthly topic proportion for each of the topics in Table~\ref{tab:content_topics}.
 
 \begin{figure}[htb]
 \centering
@@ -393,13 +383,14 @@ Comparing our topic proportion plots to real world news events, we can see that 
     \includegraphics[width=\linewidth]{../images/time_plot25.pdf}
     \caption{Obama} \label{fig:t6}
 \end{subfigure}
-\caption{Visualization of the average monthly topic proportion for a subset of content topics over time.}
+\caption{Average monthly topic proportions.}
 \label{fig:topic_time_plots}
 \end{figure}
 
+We can see that our topics seem to be correlated with the expected real-world events. The Israel topic's first peak corresponds to the July 26th, 2010 joint Israeli and Romanian helicopter disaster, while the second peak corresponds to the September 9th, 2011 attack on the Israel embassy in Egypt. Similarly, for the election topic each of the peaks corresponds to a U.S. election. Looking at the Libya topic, the first peak corresponds to the fall of Gaddafi's adminstration in October of 2011, while the second peak corresponds to the Benghazi attack on September 11th, 2012. These kinds of patterns over time are interesting to verify, and could also be used to identify the prevalent topics of discussion for times when there are not obvious world events driving discussion.\footnote{These monthly topic proportion plots for all our estimate topics are available at \url{https://github.com/lbybee/601_Final_Project/tree/master/images}.}
+
 
 \section{Email Sender Prediction}
-
 Finally, we want to consider whether we can say anything interesting about the senders based on our topic model.  In total 395 unique senders exist in our email corpus, however, only 14 senders sent more than 100 emails.  We focus on this subset of 14 senders for the remainder of our analysis.  This leaves us with a corpus of 25809 emails.  We use the topic proportions from the model estimated on the full corpus for this subset.
 
 \begin{table}[htb] \centering \scriptsize
