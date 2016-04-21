@@ -226,7 +226,7 @@ In general, it seems that spectral clustering does a good job at identifying ema
 
 
 \section{Topic Modeling}
-To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA). LDA is a popular form of topic modeling that has historically been effective for identifying meaningful ``topics'' in text corpuses.  See Figure~\ref{fig:lda_graph} for a graphical representation of the model.  The model assumes that each document can be represented as a mixture of topics, and that each word is drawn based on the topic proportions in the corresponding document.  $\theta$ represents the topic proportion for each document and $\beta$ represents the topic weights for each word.  The model is estimated using variational Bayesian methods.
+To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA). LDA is a popular form of topic modeling that has historically been effective for identifying meaningful ``topics'' in text corpuses. See Figure~\ref{fig:lda_graph} for a graphical representation of the model. The model represents each document as a mixture of topics, each topic as a probability distributions over words in the vocabulary, and therefore each word is drawn based on the topic proportions in the corresponding document. $\theta$ represents the topic proportion for each document and $\beta$ represents the topic weights for each word. The model is estimated using variational Bayesian methods \citep[for more details, see][]{bleilafferty09}.
 
 \begin{figure}
 \centering
@@ -249,7 +249,7 @@ To try and move beyond the limitations of spectral clustering and capture some o
 \label{fig:lda_graph}
 \end{figure}
 
-The primary parameter that we need to specify for LDA is the number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to coherence measures, which attempt to quantify whether estimated topics would make sense to a human observer. In particular, we considered the UMass and UCI measures.\footnote{David Mimno, Hanna M. Wallach, Edmund Talley, Mirian Leenders, and Andrew McCallum. Optimizing Semantic Coherence in Topic Models. 2011.}\footnote{David Newman, Jey Han Lau, Karl Grieser, and Timothy Baldwin. Automatic Evaluation of Topic Coherence. 2010.}
+The primary parameter that we need to specify for LDA is the number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to coherence measures, which attempt to quantify whether estimated topics would make sense to a human observer. In particular, we considered two measures, proposed by \citet{mimnoetal11} and \citet{newmanetal11}. However, the coherence of our topics did not appear to vary much across a wide range of reasonable topic numbers, anywhere from 15 to 50 topics used. As a result we manually examined the results from models using a range of topics and attempted to select the most parsimonious model, resulting in a 30 topic model.
 
 % After estimating our final topic model we want to answer a series of questions concerning our resulting topics and the email corpus.  First, can we identify a sensible structure in our topics that captures the structure we see with spectral clustering?  Second, can we identify informative content topics that correspond to real world events?  Finally, can we say anything about the email senders based on the topics discussed?
 
@@ -500,5 +500,9 @@ We have presented a series of results to attempt to make a large corpus of email
 There are many ways that this work could be expanded, and our work should be considered explorartory and a starting place more than anything else. While we begin to dive into some possible extensions when we discuss senders this idea could easily be taken further. Information on recievers, while not as clean as sender information could also be incorporated. This could allows us to build a better model of interactions within the email corpus. Additionally, variables beyond just the topic proportions could be incorporated into our model, one clear example of this is a time spline variable to account for the possibility that different senders are more important for different topics over time.
 
 Overall, we have tried to tell a story about the Hillary email corpus. We have only scratched the surface of our understanding of this corpus but we believe that we have layed out a good set of tools and a strong approach to move forward.
+
+\bibliographystyle{apa}
+\bibliography{biblio}
+
 
 \end{document}
