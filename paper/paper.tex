@@ -35,6 +35,7 @@
 \usepackage{dsfont}
 
 \usepackage{tikz}
+\usetikzlibrary{bayesnet}
 
 % \doublespacing
 \onehalfspacing
@@ -225,9 +226,30 @@ In general, it seems that spectral clustering does a good job at identifying ema
 
 
 \section{Topic Modeling}
-To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA). LDA is a popular form of topic modeling that has historically been effective for identifying meaningful ``topics'' in text corpuses.\footnote{note on estimation}
+To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA). LDA is a popular form of topic modeling that has historically been effective for identifying meaningful ``topics'' in text corpuses.  See Figure~\ref{fig:lda_graph} for a graphical representation of the model.  The model assumes that each document can be represented as a mixture of topics, and that each word is drawn based on the topic proportions in the corresponding document.  $\theta$ represents the topic proportion for each document and $\beta$ represents the topic weights for each word.  The model is estimated using variational Bayesian methods.
 
-The primary parameter that we need to specify for LDA is the number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to coherence measures, which attempt to quantify whether estimated topics would make sense to a human observer. In particular, we considered the UMass and UCI measures.\footnote{add bib here} However, the coherence of our topics did not appear to vary much across a wide range of reasonable topic numbers, anywhere from 15 to 50 topics used. As a result we manually examined the results from models using a range of topics and attempted to select the most parsimonious model, resulting in a 30 topic model.
+\begin{figure}
+\centering
+\begin{tikzpicture}[scale=1.0, every node/.style={transform shape}]
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+  \node[main] (alpha) {$\alpha$};
+  \node[main] (theta) [right=of alpha] {$\theta$};
+  \node[main] (z) [right=of theta] {$z$};
+  \node[main] (beta) [above=of z] {$\beta$};
+  \node[main, fill=black!10] (w) [right=of z] {$w$};
+  \edge {alpha} {theta};
+  \edge {theta} {z};
+  \edge {z,beta} {w};
+  \plate {words} {(z)(w)} {$N_m$};
+  \plate {docs} {(theta)(z)(w)(words.south east)(words.north west)} {$M$};
+\end{tikzpicture}
+\caption{LDA Graphical Representation}
+\label{fig:lda_graph}
+\end{figure}
+
+The primary parameter that we need to specify for LDA is the number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to coherence measures, which attempt to quantify whether estimated topics would make sense to a human observer. In particular, we considered the UMass and UCI measures.\footnote{David Mimno, Hanna M. Wallach, Edmund Talley, Mirian Leenders, and Andrew McCallum. Optimizing Semantic Coherence in Topic Models. 2011.}\footnote{David Newman, Jey Han Lau, Karl Grieser, and Timothy Baldwin. Automatic Evaluation of Topic Coherence. 2010.}
 
 % After estimating our final topic model we want to answer a series of questions concerning our resulting topics and the email corpus.  First, can we identify a sensible structure in our topics that captures the structure we see with spectral clustering?  Second, can we identify informative content topics that correspond to real world events?  Finally, can we say anything about the email senders based on the topics discussed?
 
@@ -422,7 +444,13 @@ See Table~\ref{tab:top_senders} for a ranking of the 14 senders for the subset o
 
 
 \subsection{Multinomial Logistic Regression}
-While the above results do give some sense of which senders are most associated with which topics, we next want to formalize this approach and get more general results that can more easily show us which senders are most related to each topic. To approach this problem we turn to multinomial logistic regression as a solution. Multinomial logistic regression generalizes the logistic regression approach to the case with more labels than two. Part of the output of multinomial logistic regression is a $P \times K$ matrix of coefficients corresponding to how strongly related each of the $K$ variables of interest are related to each of the $P$ labels.
+While the above results do give some sense of which senders are most associated with which topics, we next want to formalize this approach and get more general results that can more easily show us which senders are most related to each topic. To approach this problem we turn to multinomial logistic regression as a solution. Multinomial logistic regression generalizes the logistic regression approach to the case with more labels than two. The probability that the $j$th label is assigned to the $i$th email is,
+
+\begin{equation} \label{eq:smax}
+p(y_i = j | x_i, \boldsymbol{\beta}) = \frac{\exp\{\beta_j^Tx_i\}}{\sum_{1\leq k\leq K} \exp\{\beta_k^Tx_i\}}
+\end{equation}
+
+This produces a $P \times K$ matrix of coefficients, $\boldsymbol{\beta}$, corresponding to how strongly related each of the $K$ variables of interest are related to each of the $P$ labels.
 
 For our particular case we estimate a model using the $30$ topics as our explanatory variables and the $14$ senders as our labels. We use a training subset of 23229 emails and their corresponding topic proportions to train our model and a subset of 2580 emails for testing. See table \ref{tab:mlr_success} for the success rate for our testing data. Overall the model appears to perform well, correctly identifying roughly 30\% of the senders correctly. For Hillary we correctly identify 74\% of the emails.
 
