@@ -220,13 +220,13 @@ Then the eigenvectors corresponding to the smallest $k$ eigenvalues of $L$ are c
 
 Figure~\ref{fig:cluster} classifies each point according to the results of spectral clustering with $k$ clusters. We can see that many of the cluster correspond to  the visually identifiable structures, including clusters that correspond to each of the ``arms.''
 
-By investigating the individual emails, we can also get a sense of what each cluster consists of. For instance, Clusters~2 and~4 consist of emails related to calls and communication. In this arm, those closer to the main central clump contain more conversation, while those farther out are much briefer and directly about the call (e.g. ``I'd like to call tomorrow.''). Cluster~3 consists entirely of ``minis,'' summaries of the days schedule sent to Clinton each morning. Emails from Cluster~5 are generally requests to print materials, while those from Cluster~6 are forwarded news articles.
+By investigating the individual emails, we can also get a sense of what each cluster consists of. For instance, Clusters~2 and~4 consist of emails related to calls and communication. In this arm, those closer to the main central clump contain more conversation, while those farther out are much briefer and directly about the call (e.g. ``I'd like to call tomorrow.''). Cluster~3 consists entirely of ``minis,'' summaries of the day's schedule sent to Clinton each morning. Emails from Cluster~5 are generally requests to print materials, while those from Cluster~6 are forwarded news articles.
 
 In general, it seems that spectral clustering does a good job at identifying emails by their structure, but does not tell us much about the meaning of an email. We can tell that an email is regarding a call or is a news headline by what cluster it is in, but not what that call or headline is about. On a related note, it does not do a good job separating the ``regular'' emails. Over 5,000 of the 8,000 emails depicted fall into Clusters~1 or~8, which essentially consist of all the emails without specific identifiable structure. Ideally we would be able to further classify these emails according to subject matter, but clustering does not seem suited to this task.
 
 
 \section{Topic Modeling}
-To try and move beyond the limitations of spectral clustering and capture some of the content of the emails as well as structure, we next turn to latent Dirichlet allocation (LDA). LDA is a popular form of topic modeling that has historically been effective for identifying meaningful ``topics'' in text corpuses. See Figure~\ref{fig:lda_graph} for a graphical representation of the model. The model represents each document as a mixture of topics, each topic as a probability distributions over words in the vocabulary, and therefore each word is drawn based on the topic proportions in the corresponding document. $\theta$ represents the topic proportion for each document and $\beta$ represents the topic weights for each word. The model is estimated using variational Bayesian methods \citep[for more details, see][]{bleilafferty09}.
+To move beyond the limitations of clustering we use the latent Dirichlet allocation (LDA) model to hopefully capture both the content and structure emails. LDA is a popular form of topic modeling that has historically been effective for identifying meaningful ``topics'' in text corpuses. See Figure~\ref{fig:lda_graph} for a graphical representation of the model. The model represents each document as a mixture of topics, each topic as a probability distribution over words in the vocabulary, and therefore draws each word based on the topic proportions in the document it comes from. $\theta$ represents the topic proportion for each document and $\beta$ represents the topic weights for each word. The model is estimated using variational Bayesian methods \citep[for more details, see][]{bleilafferty09}.
 
 \begin{figure}
 \centering
@@ -249,7 +249,7 @@ To try and move beyond the limitations of spectral clustering and capture some o
 \label{fig:lda_graph}
 \end{figure}
 
-The primary parameter that we need to specify for LDA is the number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to coherence measures, which attempt to quantify whether estimated topics would make sense to a human observer. In particular, we considered two measures, proposed by \citet{mimnoetal11} and \citet{newmanetal11}. However, the coherence of our topics did not appear to vary much across a wide range of reasonable topic numbers, anywhere from 15 to 50 topics used. As a result we manually examined the results from models using a range of topics and attempted to select the most parsimonious model, resulting in a 30 topic model.
+The primary parameter that we need to specify for LDA is the number of topics. Since our ultimate goal is to find sensible topics that can be used to understand the email corpus, we initially turned to coherence measures, which attempt to quantify whether estimated topics would make sense to a human observer. In particular, we considered two measures, proposed by \citet{mimnoetal11} and \citet{newmanetal11}. However, the coherence of our topics did not appear to vary much across a wide range of reasonable topic numbers, anywhere from 15 to 50 topics used. As a result we manually examine the results from models using a range of topics and attempt to select the most parsimonious one, resulting in a 30 topic model.
 
 % After estimating our final topic model we want to answer a series of questions concerning our resulting topics and the email corpus.  First, can we identify a sensible structure in our topics that captures the structure we see with spectral clustering?  Second, can we identify informative content topics that correspond to real world events?  Finally, can we say anything about the email senders based on the topics discussed?
 
@@ -257,7 +257,7 @@ The primary parameter that we need to specify for LDA is the number of topics. S
 \subsection{Interpreting Topics}
 After choosing and estimating our topic model, the first task is to check whether we can actually find meaning in the resulting topics. If topics correspond to meaningful issues or structures then we can use these results to make useful observations about the data.
 
-This ability to then perform ``human'' analysis on the results is one of the key features of LDA. Bringing human intuition to bear on a 28,000 email corpus is nearly impossible, but by condensing the data into a handful of topics LDA has allowed us to leverage our human understanding of semantics and meaning to analyze the data.
+This ability to then perform ``human'' analysis on the results is one of the key features of LDA. Bringing human intuition to bear on a 28,000 email corpus is nearly impossible, but by condensing the data into a handful of topics LDA allows us to leverage our human understanding of semantics and meaning to analyze the data.
 
 Interpretation is most easily done by examining the top words from each topics to find patterns and themes. Table~\ref{tab:top_words} shows the top 10 words for each of the 30 estimated topics. The LDA algorithm makes no attempt to interpret these meanings, but by viewing them there are several easily distinguishable patterns. For example, many of the top words in Topic~6 relate to Israel and Palestine. Not every topic is as well-identified as this, and some of the estimated topics are thematically weaker than others, but overall the topics seems to correspond very well to interpretable subjects.
 
@@ -371,7 +371,7 @@ We can also look into specific topics in more detail to see what they consist of
   state       & candid     & march    & forc        & includ    & advis \\
   \bottomrule
 \end{tabular}
-\caption{Some interesting content topics}
+\caption{Some example content topics}
 \label{tab:content_topics}
 \end{table}
 
@@ -413,7 +413,7 @@ We can see that our topics seem to be correlated with the expected real-world ev
 
 
 \section{Email Sender Prediction}
-Finally, we want to consider whether we can say anything interesting about the senders based on our topic model. In total 395 unique senders exist in our email corpus, however, only 14 senders sent more than 100 emails. We focus on this subset of 14 senders for the remainder of our analysis. This leaves us with a corpus of 25809 emails. We use the topic proportions from the model estimated on the full corpus for this subset.
+Finally, we want to consider how we might incorporate sender information with  our topic model. In total 395 unique senders exist in our email corpus, however, only 14 senders sent more than 100 emails. We focus on this subset of 14 senders for the remainder of our analysis. This leaves us with a subset of 25,809 emails. We use the topic proportions from the model estimated on the full corpus for this subset.
 
 \begin{table}[htb] \centering \scriptsize
 \begin{tabular}{cccccc}
@@ -436,23 +436,23 @@ Finally, we want to consider whether we can say anything interesting about the s
   (HC) & & & (RV) & & \\
   \bottomrule
 \end{tabular}
-\caption{Primary senders for interesting topics}
+\caption{Primary senders for some example topics}
 \label{tab:top_senders}
 \end{table}
 
-See Table~\ref{tab:top_senders} for a ranking of the 14 senders for the subset of content topics explored above. This table presents the top five senders for each of the topics based on the average topic proportion for each sender. The sorting that we get back seems to fit with a human understanding of each of the senders, Sidney Blumenthal, who appears to be most associated with the Israel, Election and Obama topics is a long standing advisor to the Clinton family who has written extensively on US politics as well as foreign policy. Similarly, Huma Abedin, who is most associated with Libya was a key figure during the Benghazi hearings and was generally strongly associated with foreign policy, particularlly in the Middle East while Hillary Clinton's Deputy Chief of Staff. Finally, Judith McHale, who is most associated with the Afghanistan and international development topic was Under Secretary of State for Public Diplomacy and Public Affairs during the early portion of the email corpus under Hillary. She also has been strongly associated with a number of philanthropic efforts. It may be interesting to note that Hillary does not appear to be strongly associated with many of our subset of content topics. This pattern persists through the remainder of the content topics, in general, Hillary does not appear to send many emails strongly associated with most of the content topics.
+Table~\ref{tab:top_senders} presents the top five senders for each of several example topics based on the average topic proportions for each sender. The sorting that we get back seems to fit our understanding of the senders. For example, Sidney Blumenthal, who appears to be most associated with the Israel, Election and Obama topics is a long standing advisor to the Clinton family who has written extensively on U.S. politics as well as foreign policy. Similarly, Huma Abedin, who is most associated with Libya, was a key figure during the Benghazi hearings and was generally strongly associated with foreign policy (especially regarding the Middle East) while serving as Hillary Clinton's Deputy Chief of Staff. Judith McHale, who is most associated with the Afghanistan and international development topics, was Under Secretary of State for Public Diplomacy and Public Affairs during the early portion of of the 2008-2013 time period. She has also been strongly associated with a number of philanthropic efforts.
+
+It is interesting to note that Clinton does not appear to be strongly associated with any of these content topics. This pattern persists through the remainder of the content topics; in general, Cliton does not appear to send nearly as many emails strongly associated with content topics as she receives.
 
 
 \subsection{Multinomial Logistic Regression}
-While the above results do give some sense of which senders are most associated with which topics, we next want to formalize this approach and get more general results that can more easily show us which senders are most related to each topic. To approach this problem we turn to multinomial logistic regression as a solution. Multinomial logistic regression generalizes the logistic regression approach to the case with more labels than two. The probability that the $j$th label is assigned to the $i$th email is,
-
+While the above results do give some sense of which senders are most associated with which topics, we next want to formalize this approach and get more general results that can more easily show us which senders are most related to each topic. To approach this problem we use multinomial logistic regression. Multinomial logistic regression generalizes the logistic regression approach to cases with more than two outcome labels. The probability that the $j$th label is assigned to the $i$th email is
 \begin{equation} \label{eq:smax}
-p(y_i = j | x_i, \boldsymbol{\beta}) = \frac{\exp\{\beta_j^Tx_i\}}{\sum_{1\leq k\leq K} \exp\{\beta_k^Tx_i\}}
+p(y_i = j \cond x_i, \bmath{\beta}) = \frac{\exp \left( \beta_j^T x_i \right)}{\sum_{k=1}^K \exp \left( \beta_k^T x_i \right)}
 \end{equation}
+This produces a $P \times K$ matrix of coefficients, $\bmath{\beta}$, corresponding to how strongly related each of the $K$ variables of interest are related to each of the $P$ labels.
 
-This produces a $P \times K$ matrix of coefficients, $\boldsymbol{\beta}$, corresponding to how strongly related each of the $K$ variables of interest are related to each of the $P$ labels.
-
-For our particular case we estimate a model using the $30$ topics as our explanatory variables and the $14$ senders as our labels. We use a training subset of 23229 emails and their corresponding topic proportions to train our model and a subset of 2580 emails for testing. See table \ref{tab:mlr_success} for the success rate for our testing data. Overall the model appears to perform well, correctly identifying roughly 30\% of the senders correctly. For Hillary we correctly identify 74\% of the emails.
+For our particular case we estimate a model using the 30 topics as our explanatory variables and the 14 senders as our labels. We use a training subset of 23,229 emails and their corresponding topic proportions to train our model and a subset of 2,580 emails for testing. See Table~\ref{tab:mlr_success} for the success rate for our testing data. Overall the model appears to perform well, correctly identifying roughly 30\% of the senders correctly. For test emails sent by Clinton we correctly identify the sender 74\% of the time.
 
 \begin{table}[htb] \centering
 \begin{tabular}{ccc}
@@ -481,11 +481,7 @@ For our particular case we estimate a model using the $30$ topics as our explana
 \label{tab:mlr_success}
 \end{table}
 
-To relate these results back to our earlier analysis we want to look at the coefficients for the multinomial logistic regression model as this should give us a sense of how strongly each sender is associated with the different topics. See Figure~\ref{fig:coefficients} for a heatmap of the resulting coefficient matrix.\footnote{Note that the coefficients are standardized and then thresholded at $\pm2$ for illustrative purposes.}
-
-The results we see here all us to tell a story about the email senders that corresponds to our intution based on each of the sender's backgrounds. Sidney Blumenthal is strongly associated with the Middle East, foreign policy and general politics topics. He doesn't have much to say about Hillary or her significance to the press and generally doesn't talk muhc about meetings. Huma Abedin and Jake Sullivan provide advice on the Middle East and foreign policy. Judith McHale focuses her emails on foreign policy and handling press issues. While all this is going on Hillary spends most of her time discussing meetings.
-
-In general the story that emerges is that while Hillary does not say much herself about world events, she has surrounded herself with a set of advisors who are more than willing to say a great deal about the content topics. She then spends most of her time on email coordinating meetings, telling people to print emails and generally coordinating the information gathered from her advisors.
+The estimated coefficients from the multinomial logistic regression model give us a sense of how strongly each sender is associated with the different topics. See Figure~\ref{fig:coefficients} for a visualization of the resulting coefficient matrix.\footnote{Note that the coefficients are standardized and then thresholded at $\pm2$ for illustrative purposes.}
 
 \begin{figure}[htb] \centering
   \includegraphics[width=0.95\linewidth]{../images/coefficients.pdf}
@@ -493,13 +489,18 @@ In general the story that emerges is that while Hillary does not say much hersel
   \label{fig:coefficients}
 \end{figure}
 
+The results we see here all us to tell a story about the email senders that corresponds to our intution based on each of the senders' backgrounds. Sidney Blumenthal is strongly associated with the Middle East, foreign policy and general politics topics. He does not have much to say about Clinton, her significance to the press, or administrative topics such as meetings. Huma Abedin and Jake Sullivan provide advice on the Middle East and foreign policy. Judith McHale focuses her emails on foreign policy and handling press issues. And, as discussed before, Clinton herself primarily sends emails about meetings.
+
+The pattern that seems to emerge from these explorations is that Clinton herself does not discuss world events. Instead, she has surrounded herself with a set of advisors who constantly inform her about issues while she mostly uses email to coordinate meetings and calls where (presumably) she does her real work.
+
 
 \section{Conclusion}
-We have presented a series of results to attempt to make a large corpus of emails that would be difficult to parse manually approachable to the human user. We have been able to identify general structures in the email corpus using both spectral clustering and LDA. For LDA we find that we can seperate out content topics from structural topics and that the topics we get back are sensible and align with what we would expect in the real world. Additionally, we find that we can say something interesting about the senders for our email corpus.
+The release of the emails from the Clinton family server has provided us with an unprecedented and incredibly interesting and relevant dataset to explore. We have used statistical methods to condense this large corpus of emails so that analysis is approachable to the human user. We have been able to identify general structures in the email corpus using both spectral clustering and LDA. For LDA we find that we can seperate content topics from structural ones and that the topics we get back are sensible and align with what we would expect. Additionally, we have applied simpler statistical methods to the results from LDA to make conclusions about email senders in our corpus.
 
-There are many ways that this work could be expanded, and our work should be considered explorartory and a starting place more than anything else. While we begin to dive into some possible extensions when we discuss senders this idea could easily be taken further. Information on recievers, while not as clean as sender information could also be incorporated. This could allows us to build a better model of interactions within the email corpus. Additionally, variables beyond just the topic proportions could be incorporated into our model, one clear example of this is a time spline variable to account for the possibility that different senders are more important for different topics over time.
+There are many ways that this work could be expanded, and our work should be considered exploratory and a starting place. The amount of additional questions and topics that could be explored in this dataset is essentially endless, and the following are only a couple more potential starting points. Information on recievers, while not as clean as sender information, could also be incorporated and explored. This could help build a better model of interactions within the email corpus, possibly even incorporating network information. Additionally, LDA itself can be extended in a variety of ways. Some examples include time-varying topics, time-varying topic frequencies, or even modeling the topic or word usage of individual senders.
 
-Overall, we have tried to tell a story about the Hillary email corpus. We have only scratched the surface of our understanding of this corpus but we believe that we have layed out a good set of tools and a strong approach to move forward.
+Overall, we have started some explorations but have only scratched the surface of possible analysis that could be performed on the Hillary Clinton email corpus. We have demonstrated some of the important tools that can be used for future summary and analysis.
+
 
 \bibliographystyle{apa}
 \bibliography{biblio}
